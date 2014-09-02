@@ -19,7 +19,7 @@ private:
 
     typedef struct {
         lock_stat cur_stat;
-        int holder_id;
+        long long holder_id;
     }lock_info;
 
 protected:
