@@ -1,6 +1,7 @@
 // RPC test and pseudo-documentation.
 // generates print statements on failures, but eventually says "rpctest OK"
-
+#include <unistd.h>
+#include <sys/types.h>
 #include "rpc.h"
 #include <arpa/inet.h>
 #include <stdio.h>

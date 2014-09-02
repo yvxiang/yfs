@@ -64,6 +64,7 @@
 #include "method_thread.h"
 #include "slock.h"
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
