@@ -32,16 +32,11 @@ check_grant(lock_protocol::lockid_t lid)
 {
   ScopedLock ml(&count_mutex);
   int x = lid & 0xff;
-//  printf("now check pos %d\n", x);
- // printf("pos %x is %d\n", x, ct[x]);
   if(ct[x] != 0){
-  //printf("err in lock, lockid is %lld\n", lid);
     fprintf(stderr, "error: server granted %016llx twice\n", lid);
     fprintf(stdout, "error: server granted %016llx twice\n", lid);
- // printf("pos %x is %d\n", x, ct[x]);
     exit(1);
   }
-  //printf("%lld modify the pos %d from %d to %d\n", lid, x, ct[x], ct[x] + 1);
   ct[x] += 1;
 }
 
