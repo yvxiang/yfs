@@ -662,51 +662,38 @@ rpcs::rpcstate_t
 rpcs::checkduplicate_and_update(unsigned int clt_nonce, unsigned int xid,
 		unsigned int xid_rep, char **b, int *sz)
 {
-    char mod = 'a';
-    FILE *fp = fopen("/share/yc/log", &mod);
+    std::map<unsigned int, std::list<reply_t> >::iterator clt;
+    std::list<reply_t>::iterator it;
 	ScopedLock rwl(&reply_window_m_);
         // You fill this in for Lab 1.
-    fprintf(fp, "new request from %d, with xid = %d, xid_rep = %d\n", clt_nonce, xid, xid_rep);
-    fclose(fp);
-    std::map<unsigned int, std::list<reply_t> >::iterator map_it;
-    std::list<reply_t>::iterator list_it;
+    clt = reply_window_.find(clt_nonce);
     if(xid_rep > max_rep_xid[clt_nonce])
         max_rep_xid[clt_nonce] = xid_rep;
-    if((map_it = reply_window_.find(clt_nonce)) == reply_window_.end()) {
-        //a new client is here
-        std::list<reply_t> new_list;
-        reply_window_.insert(std::make_pair<unsigned int, 
-            std::list<reply_t> >(clt_nonce, new_list));
-        struct reply_t new_reply(xid);
-        reply_window_[clt_nonce].push_back(new_reply);
-        return NEW;
-    } else {
-        for(list_it = map_it->second.begin(); list_it != map_it->second.end();
-                                                list_it++) {
-            if(list_it->xid == xid) {
-                if(list_it->cb_present == true) {
-                    *b = list_it->buf;
-                    *sz = list_it->sz;
-                    return DONE;
-                }
-                return INPROGRESS;
+
+    for(it = clt->second.begin(); it != clt->second.end(); it++) {
+        if(it->xid == xid) {
+            if(it->cb_present == true) {
+                *b = it->buf;
+                *sz = it->sz;
+                return DONE;
             }
-        } 
-        if(xid <= max_rep_xid[clt_nonce]) {
-            return FORGOTTEN;
+            return INPROGRESS;
         }
-        for(list_it = map_it->second.begin(); list_it != map_it->second.end();
-                                                ) {
-            if(list_it->xid <= xid_rep) {
-                free(list_it->buf);
-                list_it = map_it->second.erase(list_it);
-            } else list_it++;
+    }
+    if(xid <= xid_rep) {
+        return FORGOTTEN;
+    } else {
+        it = clt->second.begin();
+        while(it != clt->second.end()) {
+            if(it->xid <= xid_rep) {
+                free(it->buf);
+                it = clt->second.erase(it);
+            } else it++;
         }
         struct reply_t new_reply(xid);
-        map_it->second.push_back(new_reply);
+        clt->second.push_back(new_reply);
         return NEW;
     }
-    printf("should not get here!!!\n");
 }
 
 // rpcs::dispatch calls add_reply when it is sending a reply to an RPC,
@@ -718,6 +705,7 @@ void
 rpcs::add_reply(unsigned int clt_nonce, unsigned int xid,
 		char *b, int sz)
 {
+    
 	ScopedLock rwl(&reply_window_m_);
         // You fill this in for Lab 1.
     std::list<reply_t>::iterator it;
@@ -726,12 +714,10 @@ rpcs::add_reply(unsigned int clt_nonce, unsigned int xid,
         if(it->xid == xid) {
             it->buf = b;
             it->sz = sz;
-            break;
+            it->cb_present = true;
+            return ;
         }
     }
-    char mod = 'a';
-    FILE *fp = fopen("/share/yc/log", &mod); 
-    fprintf(fp, "new reply to %d, with xid = %d\n", clt_nonce, xid);
 }
 
 void
@@ -746,8 +732,9 @@ rpcs::free_reply_window(void)
 			free((*it).buf);
 		}
 		clt->second.clear();
-	}
+	
 	reply_window_.clear();
+    max_rep_xid.clear();
 }
 
 // rpc handler
