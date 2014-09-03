@@ -557,6 +557,7 @@ rpcs::dispatch(djob_t *j)
 			// if we don't know about this clt_nonce, create a cleanup object
 			if(reply_window_.find(h.clt_nonce) == reply_window_.end()){
 				VERIFY (reply_window_[h.clt_nonce].size() == 0); // create
+                max_rep_xid[h.clt_nonce] = 0;
 				jsl_log(JSL_DBG_2,
 						"rpcs::dispatch: new client %u xid %d chan %d, total clients %d\n", 
 						h.clt_nonce, h.xid, c->channo(), (int)reply_window_.size());
@@ -661,10 +662,51 @@ rpcs::rpcstate_t
 rpcs::checkduplicate_and_update(unsigned int clt_nonce, unsigned int xid,
 		unsigned int xid_rep, char **b, int *sz)
 {
+    char mod = 'a';
+    FILE *fp = fopen("/share/yc/log", &mod);
 	ScopedLock rwl(&reply_window_m_);
-
         // You fill this in for Lab 1.
-	return NEW;
+    fprintf(fp, "new request from %d, with xid = %d, xid_rep = %d\n", clt_nonce, xid, xid_rep);
+    fclose(fp);
+    std::map<unsigned int, std::list<reply_t> >::iterator map_it;
+    std::list<reply_t>::iterator list_it;
+    if(xid_rep > max_rep_xid[clt_nonce])
+        max_rep_xid[clt_nonce] = xid_rep;
+    if((map_it = reply_window_.find(clt_nonce)) == reply_window_.end()) {
+        //a new client is here
+        std::list<reply_t> new_list;
+        reply_window_.insert(std::make_pair<unsigned int, 
+            std::list<reply_t> >(clt_nonce, new_list));
+        struct reply_t new_reply(xid);
+        reply_window_[clt_nonce].push_back(new_reply);
+        return NEW;
+    } else {
+        for(list_it = map_it->second.begin(); list_it != map_it->second.end();
+                                                list_it++) {
+            if(list_it->xid == xid) {
+                if(list_it->cb_present == true) {
+                    *b = list_it->buf;
+                    *sz = list_it->sz;
+                    return DONE;
+                }
+                return INPROGRESS;
+            }
+        } 
+        if(xid <= max_rep_xid[clt_nonce]) {
+            return FORGOTTEN;
+        }
+        for(list_it = map_it->second.begin(); list_it != map_it->second.end();
+                                                ) {
+            if(list_it->xid <= xid_rep) {
+                free(list_it->buf);
+                list_it = map_it->second.erase(list_it);
+            } else list_it++;
+        }
+        struct reply_t new_reply(xid);
+        map_it->second.push_back(new_reply);
+        return NEW;
+    }
+    printf("should not get here!!!\n");
 }
 
 // rpcs::dispatch calls add_reply when it is sending a reply to an RPC,
@@ -678,6 +720,18 @@ rpcs::add_reply(unsigned int clt_nonce, unsigned int xid,
 {
 	ScopedLock rwl(&reply_window_m_);
         // You fill this in for Lab 1.
+    std::list<reply_t>::iterator it;
+    for(it = reply_window_[clt_nonce].begin();
+            it != reply_window_[clt_nonce].end(); it++) {
+        if(it->xid == xid) {
+            it->buf = b;
+            it->sz = sz;
+            break;
+        }
+    }
+    char mod = 'a';
+    FILE *fp = fopen("/share/yc/log", &mod); 
+    fprintf(fp, "new reply to %d, with xid = %d\n", clt_nonce, xid);
 }
 
 void
