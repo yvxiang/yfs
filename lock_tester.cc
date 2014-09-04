@@ -1,7 +1,8 @@
 //
 // Lock server tester
 //
-
+#include <sys/types.h>
+#include <unistd.h>
 #include "lock_protocol.h"
 #include "lock_client.h"
 #include "rpc.h"
