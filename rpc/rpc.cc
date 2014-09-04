@@ -732,7 +732,7 @@ rpcs::free_reply_window(void)
 			free((*it).buf);
 		}
 		clt->second.clear();
-	
+    }	
 	reply_window_.clear();
     max_rep_xid.clear();
 }
