@@ -165,9 +165,16 @@ fuseserver_read(fuse_req_t req, fuse_ino_t ino, size_t size,
                 off_t off, struct fuse_file_info *fi)
 {
   // You fill this in for Lab 2
-#if 0
+#if 1
   std::string buf;
   // Change the above "#if 0" to "#if 1", and your code goes here
+  std::string file_con;
+  int ret = yfs->get(ino, file_con);
+  if(ret != yfs_client::OK) {
+      fuse_reply_err(req, ENOSYS);
+      return ;
+  }
+  buf = file_con.substr(off, size); 
   fuse_reply_buf(req, buf.data(), buf.size());
 #else
   fuse_reply_err(req, ENOSYS);
