@@ -95,9 +95,9 @@ yfs_client::getdir(inum inum, dirinfo &din)
 int 
 yfs_client::get(inum file_num, std::string &file_con)
 {
-    printf("want to get file in yfs_client\n");
+    //printf("want to get file in yfs_client\n");
     int ret = ec->get(file_num, file_con);
-    printf("yfs_client get file returns %d\n");
+    //printf("yfs_client get file returns %d\n");
 //    return ec->get(file_num, file_con);
     return ret;
 }
@@ -127,12 +127,13 @@ yfs_client::create(inum parent_num, std::string new_file_name,
   
     int ret = get(parent_num, dir_con);
     if(ret != OK)  return ret;
+    /*
     fprintf(fp, "old dic con\n");
     fprintf(fp, "------------\n");
     const char *old = dir_con.c_str();
     fprintf(fp, "%s\n", old);
     fprintf(fp, "------------\n");
-
+    */
     std::string::iterator end = dir_con.begin();
     std::string cur_file_name;
     std::string cur_file_con;
@@ -152,8 +153,8 @@ yfs_client::create(inum parent_num, std::string new_file_name,
             break;
         end++;
     }
-    const char *n = new_file_name.c_str();
-    printf("has check the dir, we are allowed to create file %s\n", n); 
+    //const char *n = new_file_name.c_str();
+    //printf("has check the dir, we are allowed to create file %s\n", n); 
 
     // now pick up a inum for the new file(dic)
 //    srandom(getpid());
@@ -163,37 +164,23 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     } else {
         new_file_inum = (rand() & 0xFFFFFFFF) | (1 << 31);
     }
-    /*
-    tmp_num = random();
-    if(is_dir) {
-        if(tmp_num & (1 << 31))
-            tmp_num = tmp_num & ~(1 << 31);
-    } else {
-        tmp_num = tmp_num | (1 << 31);
-    }
-    */
-
-//    new_file_inum = tmp_num;
-    //ready to write, start to construct the new file contet
-    /*
-    dir_con += (new_file_name);
-    dir_con += (" " + filename(new_file_inum));
-    */
-    fprintf(fp, "new file num:!!!!!!! %llu\n", new_file_inum);
+    //fprintf(fp, "new file num:!!!!!!! %llu\n", new_file_inum);
     new_file_name += " " + filename(new_file_inum);
 
     ret = put(parent_num, new_file_name);
    // fprintf(fp, "we have update the dic %lld\n", parent_num);
+    /*
     const char *c_dic = dir_con.c_str();
     fprintf(fp, "\n\n");
     fprintf(fp, "new dic\n");
     fprintf(fp, "--------\n");
     fprintf(fp, "%s\n", c_dic);
     fprintf(fp, "--------\n");
+    */
     if(ret != OK)   return ret;
 
     ret = put(new_file_inum, cur_file_con);
-    fprintf(fp, "we have touch the new file %s, %d\n", n, new_file_inum);
+    //fprintf(fp, "we have touch the new file %s, %d\n", n, new_file_inum);
 
     fclose(fp);
     return OK;
@@ -211,7 +198,7 @@ yfs_client::lookup(inum parent_num, std::string file_name, inum &file_num)
 
     std::string::iterator end = dir_con.begin();
     std::string cur_file_name = "";
-    printf("look up file begin\n");
+    //printf("look up file begin\n");
     while(end != dir_con.end()) {
         cur_file_name = "";
         while(end != dir_con.end() && *end != ' ') {
@@ -224,14 +211,16 @@ yfs_client::lookup(inum parent_num, std::string file_name, inum &file_num)
             cur_file_num = cur_file_num * 10 + *end - '0';
             end++;
         }
+        /*
         const char *cn = cur_file_name.c_str();
         printf("%s\n", cn);
+        */
         if(file_name == cur_file_name) {
             file_num = cur_file_num;
             return true;
         }
         if(end == dir_con.end()) {
-            printf("couldn't find\n");
+            //printf("couldn't find\n");
             return false;
         }
         end++;

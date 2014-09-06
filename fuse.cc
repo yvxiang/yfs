@@ -70,7 +70,7 @@ getattr(yfs_client::inum inum, struct stat &st)
      st.st_ctime = info.ctime;
      printf("   getattr -> %lu %lu %lu\n", info.atime, info.mtime, info.ctime);
    }
-   printf("fuse get attr OK\n");
+//   printf("fuse get attr OK\n");
    return yfs_client::OK;
 }
 
@@ -122,7 +122,7 @@ void
 fuseserver_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
                    int to_set, struct fuse_file_info *fi)
 {
-  printf("fuseserver_setattr 0x%x\n", to_set);
+  //printf("fuseserver_setattr 0x%x\n", to_set);
   if (FUSE_SET_ATTR_SIZE & to_set) {
     printf("   fuseserver_setattr set size to %zu\n", attr->st_size);
     struct stat st;
