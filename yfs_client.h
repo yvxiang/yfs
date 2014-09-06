@@ -31,6 +31,12 @@ class yfs_client {
     yfs_client::inum inum;
   };
 
+  struct file_list {
+      std::string name;
+      yfs_client::inum inum;
+  };
+
+
  private:
   static std::string filename(inum);
   static inum n2i(std::string);
@@ -43,6 +49,15 @@ class yfs_client {
 
   int getfile(inum, fileinfo &);
   int getdir(inum, dirinfo &);
+
+  void parse_file_list(std::string &, file_list &);
+  bool check_exist(inum, file_list &);
+
+  int get(inum, std::string &);
+  int put(inum, std::string );
+  int create(inum, std::string, inum &, bool is_dir = false);
+  bool lookup(inum, std::string, inum&);
+ 
 };
 
 #endif 

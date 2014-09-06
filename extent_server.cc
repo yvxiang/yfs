@@ -8,18 +8,70 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-extent_server::extent_server() {}
+extent_server::~extent_server()
+{
+    std::map<extent_protocol::extentid_t, file>::iterator it;
+    for(it = file_map.begin(); it != file_map.end(); it++) {
+        const char *n = it->second.content.c_str();
+        printf("%s\n", n);
+    }
+}
+
+extent_server::extent_server()
+{ pthread_mutex_init(&operation_lock, NULL);
+  file root_dic;
+  root_dic.file_attr.atime = root_dic.file_attr.ctime = 
+      root_dic.file_attr.mtime = time(NULL);
+  file_map.insert(std::make_pair<extent_protocol::extentid_t, file> (
+                    0x00000001, root_dic));
+}
 
 
 int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
 {
   // You fill this in for Lab 2.
-  return extent_protocol::IOERR;
+  pthread_mutex_lock(&operation_lock);
+  std::map<extent_protocol::extentid_t, file>::iterator file_it;
+
+  if((file_it = file_map.find(id)) != file_map.end()) {
+      if(file_it->second.content != "")
+          file_it->second.content += " ";
+      file_it->second.content += buf;
+      time_t cur_time;
+      time(&cur_time);
+      file_it->second.file_attr.atime = file_it->second.file_attr.mtime
+                                        = time(NULL);
+                        
+      file_it->second.file_attr.size = (unsigned int)cur_time;
+      pthread_mutex_unlock(&operation_lock);
+      return extent_protocol::OK;
+  }
+  file new_file;
+  time_t cur_time;
+  time(&cur_time);
+  new_file.file_attr.atime = new_file.file_attr.ctime = time(NULL);
+  new_file.file_attr.size = buf.size();
+  file_map.insert(std::make_pair<extent_protocol::extentid_t, file>(id, new_file));
+  pthread_mutex_unlock(&operation_lock);
+  return extent_protocol::OK;
+//  return extent_protocol::IOERR;
 }
 
 int extent_server::get(extent_protocol::extentid_t id, std::string &buf)
 {
   // You fill this in for Lab 2.
+  pthread_mutex_lock(&operation_lock);
+
+  std::map<extent_protocol::extentid_t, file>::iterator file_it;
+  if((file_it = file_map.find(id)) != file_map.end()) {
+      buf = file_it->second.content;
+      pthread_mutex_unlock(&operation_lock);
+      return extent_protocol::OK;
+  } else {
+      pthread_mutex_unlock(&operation_lock);
+      return extent_protocol::NOENT;
+  }
+
   return extent_protocol::IOERR;
 }
 
@@ -29,16 +81,45 @@ int extent_server::getattr(extent_protocol::extentid_t id, extent_protocol::attr
   // You replace this with a real implementation. We send a phony response
   // for now because it's difficult to get FUSE to do anything (including
   // unmount) if getattr fails.
+  /*
   a.size = 0;
   a.atime = 0;
   a.mtime = 0;
   a.ctime = 0;
+  */
+  pthread_mutex_lock(&operation_lock);
+  std::map<extent_protocol::extentid_t, file>::iterator file_it;
+
+  if((file_it = file_map.find(id)) != file_map.end()) {
+      a.size = file_it->second.file_attr.size;
+      a.atime = file_it->second.file_attr.atime;
+      a.mtime = file_it->second.file_attr.mtime;
+      a.ctime = file_it->second.file_attr.ctime;
+      pthread_mutex_unlock(&operation_lock);
+      return extent_protocol::OK;
+  } else {
+      pthread_mutex_unlock(&operation_lock);
+      return extent_protocol::NOENT;
+  }
+
   return extent_protocol::OK;
 }
 
 int extent_server::remove(extent_protocol::extentid_t id, int &)
 {
   // You fill this in for Lab 2.
+  pthread_mutex_lock(&operation_lock);
+  std::map<extent_protocol::extentid_t, file>::iterator file_it;
+
+  if((file_it = file_map.find(id)) != file_map.end()) {
+      file_map.erase(file_it);
+      pthread_mutex_unlock(&operation_lock);
+      return extent_protocol::OK;
+  } else {
+      pthread_mutex_unlock(&operation_lock);
+      return extent_protocol::NOENT;
+  }
+
   return extent_protocol::IOERR;
 }
 

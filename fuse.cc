@@ -70,6 +70,7 @@ getattr(yfs_client::inum inum, struct stat &st)
      st.st_ctime = info.ctime;
      printf("   getattr -> %lu %lu %lu\n", info.atime, info.mtime, info.ctime);
    }
+   printf("fuse get attr OK\n");
    return yfs_client::OK;
 }
 
@@ -220,7 +221,23 @@ fuseserver_createhelper(fuse_ino_t parent, const char *name,
   e->entry_timeout = 0.0;
   e->generation = 0;
   // You fill this in for Lab 2
-  return yfs_client::NOENT;
+  yfs_client::inum  new_file;
+  yfs_client::inum parent_name = parent;
+
+  int ret = yfs->create(parent_name, std::string(name), new_file, false); 
+  if(ret != yfs_client::OK) return ret;
+
+  e->ino = new_file;
+  struct stat new_file_attr;
+  printf("we want to  got the correspend attr of %s\n", name);
+  ret = getattr(new_file, new_file_attr);
+
+  if(ret != yfs_client::OK) return ret;
+  printf("we have got the correspend attr of %s\n", name);
+  e->attr = new_file_attr;
+
+  return yfs_client::OK;
+  
 }
 
 void
@@ -271,10 +288,20 @@ fuseserver_lookup(fuse_req_t req, fuse_ino_t parent, const char *name)
   bool found = false;
 
   // You fill this in for Lab 2
-  if (found)
+  yfs_client::inum parent_num = parent;
+  yfs_client::inum file_num;
+
+  printf("fuse wants to look up the dic %lld, file name %s\n", parent, name);
+  found = yfs->lookup(parent_num, std::string(name), file_num);
+  printf("the result of the look up is %d\n", found);
+
+  if (found) {
+    int ret = getattr(file_num, e.attr);
+    e.ino = file_num;
     fuse_reply_entry(req, &e);
-  else
+  } else {
     fuse_reply_err(req, ENOENT);
+  }
 }
 
 
@@ -328,11 +355,38 @@ fuseserver_readdir(fuse_req_t req, fuse_ino_t ino, size_t size,
     return;
   }
 
+
   memset(&b, 0, sizeof(b));
 
 
   // You fill this in for Lab 2
+  std::string dir_cont;
+  yfs->get(ino, dir_cont);
 
+  std::string::iterator end = dir_cont.begin();
+  std::string cur_str;
+  while(end != dir_cont.end()) {
+      while(end != dir_cont.end() && *end != ' ') {
+          cur_str += *end;
+          end++;
+      }
+      end++;
+      char *cur_file_name = (char *)malloc(sizeof(char) * (cur_str.size() + 1));
+      memset(cur_file_name, '\0', sizeof(char) * (cur_str.size() + 1));
+      std::copy(cur_str.begin(), cur_str.end(), cur_file_name);
+      cur_str = "";
+      
+      yfs_client::inum cur_file_num = 0;
+      while(end != dir_cont.end() && *end != ' ') {
+          cur_file_num = cur_file_num * 10 + *end - '0';
+          end++;
+      }
+      dirbuf_add(&b, cur_file_name, cur_file_num);
+      free(cur_file_name);
+      if(end == dir_cont.end())
+          break;
+      end++;
+  }
 
   reply_buf_limited(req, b.p, b.size, off, size);
   free(b.p);
