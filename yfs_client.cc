@@ -180,9 +180,12 @@ yfs_client::create(inum parent_num, std::string new_file_name,
         new_file_inum = (rand() & 0xFFFFFFFF) | (1 << 31);
     }
     //fprintf(fp, "new file num:!!!!!!! %llu\n", new_file_inum);
+    if(dir_con.size() != 0) {
+        new_file_name.insert(0, 1, ' ');
+    }
     new_file_name += " " + filename(new_file_inum);
-
-    ret = put(parent_num, new_file_name);
+    dir_con += new_file_name; 
+    ret = put(parent_num, dir_con);
    // fprintf(fp, "we have update the dic %lld\n", parent_num);
     /*
     const char *c_dic = dir_con.c_str();
@@ -220,6 +223,8 @@ yfs_client::lookup(inum parent_num, std::string file_name, inum &file_num)
             cur_file_name += *end;
             end++;
         }
+        if(end == dir_con.end())
+            return false;
         end++;
         inum cur_file_num = 0;
         while(end != dir_con.end() && *end != ' ') {

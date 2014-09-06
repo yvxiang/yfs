@@ -11,6 +11,7 @@
 extent_server::extent_server()
 { pthread_mutex_init(&operation_lock, NULL);
   file root_dic;
+  root_dic.content = "";
   root_dic.file_attr.atime = root_dic.file_attr.ctime = 
       root_dic.file_attr.mtime = time(NULL);
   file_map.insert(std::make_pair<extent_protocol::extentid_t, file> (
@@ -25,9 +26,7 @@ int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
   std::map<extent_protocol::extentid_t, file>::iterator file_it;
 
   if((file_it = file_map.find(id)) != file_map.end()) {
-      if(file_it->second.content != "")
-          file_it->second.content += " ";
-      file_it->second.content += buf;
+      file_it->second.content = buf;
       time_t cur_time;
       time(&cur_time);
       file_it->second.file_attr.atime = file_it->second.file_attr.mtime
