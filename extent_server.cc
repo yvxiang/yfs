@@ -78,22 +78,52 @@ int extent_server::getattr(extent_protocol::extentid_t id, extent_protocol::attr
   a.mtime = 0;
   a.ctime = 0;
   */
-  pthread_mutex_lock(&operation_lock);
-  std::map<extent_protocol::extentid_t, file>::iterator file_it;
+    pthread_mutex_lock(&operation_lock);
+    std::map<extent_protocol::extentid_t, file>::iterator file_it;
 
-  if((file_it = file_map.find(id)) != file_map.end()) {
-      a.size = file_it->second.file_attr.size;
-      a.atime = file_it->second.file_attr.atime;
-      a.mtime = file_it->second.file_attr.mtime;
-      a.ctime = file_it->second.file_attr.ctime;
-      pthread_mutex_unlock(&operation_lock);
-      return extent_protocol::OK;
-  } else {
-      pthread_mutex_unlock(&operation_lock);
-      return extent_protocol::NOENT;
-  }
+    if((file_it = file_map.find(id)) != file_map.end()) {
+        a.size = file_it->second.file_attr.size;
+        a.atime = file_it->second.file_attr.atime;
+        a.mtime = file_it->second.file_attr.mtime;
+        a.ctime = file_it->second.file_attr.ctime;
+        pthread_mutex_unlock(&operation_lock);
+        return extent_protocol::OK;
+    } else {
+        pthread_mutex_unlock(&operation_lock);
+        return extent_protocol::NOENT;
+    }
 
-  return extent_protocol::OK;
+}
+
+int extent_server::setattr(extent_protocol::extentid_t id, 
+                                        extent_protocol::attr &a)
+{
+    
+    pthread_mutex_lock(&operation_lock); 
+    std::map<extent_protocol::extentid_t, file>::iterator file_it;
+
+    if((file_it = file_map.find(id)) != file_map.end()) {
+
+        file_it->second.file_attr.size = a.size;
+        file_it->second.file_attr.atime = a.atime;
+        file_it->second.file_attr.ctime = a.ctime;
+        file_it->second.file_attr.mtime = a.mtime;
+        if(a.size < file_it->second.content.size()) {
+            file_it->second.content.resize(a.size);
+        } else if(a.size > file_it->second.content.size()) {
+            file_it->second.content.resize(a.size, '\0');
+        }
+
+        pthread_mutex_unlock(&operation_lock);
+        return extent_protocol::OK;
+
+    } else {
+
+        pthread_mutex_unlock(&operation_lock);
+        return extent_protocol::NOENT;
+
+    }
+
 }
 
 int extent_server::remove(extent_protocol::extentid_t id, int &)

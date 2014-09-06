@@ -48,10 +48,9 @@ class yfs_client {
   bool isdir(inum);
 
   int getfile(inum, fileinfo &);
+  int setfile(inum, fileinfo);
   int getdir(inum, dirinfo &);
 
-  void parse_file_list(std::string &, file_list &);
-  bool check_exist(inum, file_list &);
 
   int get(inum, std::string &);
   int put(inum, std::string );

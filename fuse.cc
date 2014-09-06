@@ -127,10 +127,19 @@ fuseserver_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
     printf("   fuseserver_setattr set size to %zu\n", attr->st_size);
     struct stat st;
     // You fill this in for Lab 2
-#if 0
+#if 1
     // Change the above line to "#if 1", and your code goes here
     // Note: fill st using getattr before fuse_reply_attr
+    //fuse_reply_attr(req, &st, 0);
+    yfs_client::fileinfo file_info;
+    int ret = yfs->getfile(ino, file_info);
+    if(ret != yfs_client::OK)   return ;
+    file_info.size = attr->st_size;
+    ret = yfs->setfile(ino, file_info);
+    if(ret != yfs_client::OK)   fuse_reply_err(req, ENOSYS);
+    getattr(ino, st);
     fuse_reply_attr(req, &st, 0);
+
 #else
     fuse_reply_err(req, ENOSYS);
 #endif

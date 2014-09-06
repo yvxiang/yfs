@@ -74,6 +74,28 @@ yfs_client::getfile(inum inum, fileinfo &fin)
 }
 
 int
+yfs_client::setfile(inum inum, fileinfo file_info)
+{
+    int r = OK;
+
+  printf("setfile %016llx\n", inum);
+  extent_protocol::attr a;
+  a.size = file_info.size;
+  a.atime = file_info.atime;
+  a.ctime = file_info.ctime;
+  a.mtime = file_info.mtime;
+  if(ec->setattr(inum, a) != extent_protocol::OK) {
+      r = IOERR;
+      goto release;
+  }
+  return OK;
+
+ release:
+
+  return r;
+}
+
+int
 yfs_client::getdir(inum inum, dirinfo &din)
 {
   int r = OK;
@@ -106,13 +128,6 @@ int
 yfs_client::put(inum file_num, std::string file_con)
 {
     return ec->put(file_num, file_con);
-}
-
-
-bool
-yfs_client::check_exist(inum file_num, file_list &dir_file_list)
-{
-    return true;
 }
 
 int 
