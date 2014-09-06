@@ -202,8 +202,28 @@ fuseserver_write(fuse_req_t req, fuse_ino_t ino,
                  struct fuse_file_info *fi)
 {
   // You fill this in for Lab 2
-#if 0
+#if 1
   // Change the above line to "#if 1", and your code goes here
+  yfs_client::fileinfo f_in;
+  int ret = yfs->getfile(ino, f_in);
+
+  if(ret != yfs_client::OK) {
+      fuse_reply_err(req, ENOSYS);
+      return ;
+  }
+  if(f_in.size < off + size) {
+      f_in.size = off + size;
+      yfs->setfile(ino, f_in);
+  }
+  std::string file_con;
+  ret = yfs->get(ino, file_con);
+  if(ret != yfs_client::OK) {
+      fuse_reply_err(req, ENOSYS);
+      return ;
+  }
+
+  file_con.insert(off, buf, size);
+  yfs->put(ino, file_con);
   fuse_reply_write(req, size);
 #else
   fuse_reply_err(req, ENOSYS);
