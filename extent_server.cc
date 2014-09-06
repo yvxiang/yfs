@@ -8,15 +8,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-extent_server::~extent_server()
-{
-    std::map<extent_protocol::extentid_t, file>::iterator it;
-    for(it = file_map.begin(); it != file_map.end(); it++) {
-        const char *n = it->second.content.c_str();
-        printf("%s\n", n);
-    }
-}
-
 extent_server::extent_server()
 { pthread_mutex_init(&operation_lock, NULL);
   file root_dic;

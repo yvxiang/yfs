@@ -12,7 +12,6 @@ class extent_server {
 
  public:
   extent_server();
-  ~extent_server();
   struct file {
       std::string content;
       extent_protocol::attr file_attr;
