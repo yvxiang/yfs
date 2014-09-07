@@ -249,7 +249,39 @@ yfs_client::lookup(inum parent_num, std::string file_name, inum &file_num)
     return false;
 }
     
+int
+yfs_client::read(inum inum, std::string &buf, size_t &size,
+                                                off_t off)
+{
+    int ret = get(inum, buf);
+    if(ret != OK)   return ret;
+    if(off >= buf.size()) {
+        buf = "";
+    } else {
+        buf = buf.substr(off, size);
+    }
+    size = buf.size();
+    return OK;
+}
 
+int
+yfs_client::write(inum inum, std::string str, off_t off,
+                                        size_t &size)
+{
+    if(!isfile(inum))   return IOERR;
+    std::string file_con; 
+    int ret = get(inum, file_con);
+    if(ret != OK)   return ret;
+    if(off >= file_con.size())
+        file_con.resize(off);
+    printf("in yfs_client::write old %s\n", file_con.c_str());
+    file_con.replace(off, str.size(), str);
+    printf("in yfs_client::write new %s\n", file_con.c_str());
+    size = str.size();
+    ret = put(inum, file_con);
+    return ret;
+  return ret;   
+}
 
 
 

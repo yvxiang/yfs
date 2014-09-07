@@ -26,9 +26,9 @@ int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
   std::map<extent_protocol::extentid_t, file>::iterator file_it;
 
   if((file_it = file_map.find(id)) != file_map.end()) {
+      printf("in extent_server::put old %s\n", file_it->second.content.c_str());
+      printf("in extent_server::put new %s\n", buf.c_str());
       file_it->second.content = buf;
-      time_t cur_time;
-      time(&cur_time);
       file_it->second.file_attr.atime = file_it->second.file_attr.mtime
                                         = time(NULL);
                         
@@ -37,8 +37,6 @@ int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
       return extent_protocol::OK;
   }
   file new_file;
-  time_t cur_time;
-  time(&cur_time);
   new_file.file_attr.atime = new_file.file_attr.ctime = time(NULL);
   new_file.file_attr.size = 0;
   new_file.content = "";

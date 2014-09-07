@@ -56,6 +56,8 @@ class yfs_client {
   int put(inum, std::string );
   int create(inum, std::string, inum &, bool is_dir = false);
   bool lookup(inum, std::string, inum&);
+  int read(inum, std::string&, size_t&, off_t);
+  int write(inum, std::string, off_t, size_t&);
  
 };
 

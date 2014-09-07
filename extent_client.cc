@@ -53,6 +53,7 @@ extent_client::put(extent_protocol::extentid_t eid, std::string buf)
   extent_protocol::status ret = extent_protocol::OK;
   int r;
   ret = cl->call(extent_protocol::put, eid, buf, r);
+  printf("extent_client::put %s\n", buf.c_str());
   return ret;
 }
 
