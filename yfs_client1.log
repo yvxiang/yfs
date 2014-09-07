@@ -1,0 +1,115 @@
+FUSE library version: 2.8.6
+unique: 1, opcode: INIT (26), nodeid: 0, insize: 56
+INIT: 7.22
+flags=0x0000f7fb
+max_readahead=0x00020000
+   INIT: 7.12
+   flags=0x00000000
+   max_readahead=0x00020000
+   max_write=0x00020000
+   unique: 1, success, outsize: 40
+unique: 2, opcode: LOOKUP (1), nodeid: 1, insize: 47
+fuse wants to look up the dic 1, file name a48268
+the result of the look up is 0
+   unique: 2, error: -2 (No such file or directory), outsize: 16
+unique: 3, opcode: CREATE (35), nodeid: 1, insize: 63
+we want to  got the correspend attr of a48268
+getattr 00000000e9579dc0 1
+getfile 00000000e9579dc0
+getfile 00000000e9579dc0 -> sz 0
+   getattr -> 0
+we have got the correspend attr of a48268
+   unique: 3, success, outsize: 160
+unique: 4, opcode: IOCTL (39), nodeid: 3914833344, insize: 72
+   unique: 4, error: -38 (Function not implemented), outsize: 16
+unique: 5, opcode: GETATTR (3), nodeid: 3914833344, insize: 56
+getattr 00000000e9579dc0 1
+getfile 00000000e9579dc0
+getfile 00000000e9579dc0 -> sz 0
+   getattr -> 0
+   unique: 5, success, outsize: 120
+unique: 6, opcode: GETXATTR (22), nodeid: 3914833344, insize: 68
+   unique: 6, error: -38 (Function not implemented), outsize: 16
+unique: 7, opcode: WRITE (16), nodeid: 3914833344, insize: 680
+getfile 00000000e9579dc0
+getfile 00000000e9579dc0 -> sz 0
+file is too small, old size = 0, new size = 600
+setfile 00000000e9579dc0
+set size of 3914833344 to 600
+extent_client::setattr 3914833344 600
+   unique: 7, success, outsize: 24
+unique: 8, opcode: FLUSH (25), nodeid: 3914833344, insize: 64
+   unique: 8, error: -38 (Function not implemented), outsize: 16
+unique: 9, opcode: RELEASE (18), nodeid: 3914833344, insize: 64
+   unique: 9, success, outsize: 16
+unique: 10, opcode: LOOKUP (1), nodeid: 1, insize: 47
+fuse wants to look up the dic 1, file name a48268
+the result of the look up is 1
+getattr 00000000e9579dc0 1
+getfile 00000000e9579dc0
+getfile 00000000e9579dc0 -> sz 600
+   getattr -> 600
+   unique: 10, success, outsize: 144
+unique: 11, opcode: OPEN (14), nodeid: 3914833344, insize: 48
+   unique: 11, success, outsize: 32
+unique: 12, opcode: IOCTL (39), nodeid: 3914833344, insize: 72
+   unique: 12, error: -38 (Function not implemented), outsize: 16
+unique: 13, opcode: GETATTR (3), nodeid: 3914833344, insize: 56
+getattr 00000000e9579dc0 1
+getfile 00000000e9579dc0
+getfile 00000000e9579dc0 -> sz 600
+   getattr -> 600
+   unique: 13, success, outsize: 120
+unique: 14, opcode: GETATTR (3), nodeid: 3914833344, insize: 56
+getattr 00000000e9579dc0 1
+getfile 00000000e9579dc0
+getfile 00000000e9579dc0 -> sz 600
+   getattr -> 600
+   unique: 14, success, outsize: 120
+unique: 15, opcode: READ (15), nodeid: 3914833344, insize: 80
+   unique: 15, success, outsize: 616
+unique: 16, opcode: GETATTR (3), nodeid: 3914833344, insize: 56
+getattr 00000000e9579dc0 1
+getfile 00000000e9579dc0
+getfile 00000000e9579dc0 -> sz 600
+   getattr -> 600
+   unique: 16, success, outsize: 120
+unique: 17, opcode: RELEASE (18), nodeid: 3914833344, insize: 64
+   unique: 17, success, outsize: 16
+unique: 18, opcode: LOOKUP (1), nodeid: 1, insize: 47
+fuse wants to look up the dic 1, file name b48268
+the result of the look up is 0
+   unique: 18, error: -2 (No such file or directory), outsize: 16
+unique: 19, opcode: CREATE (35), nodeid: 1, insize: 63
+we want to  got the correspend attr of b48268
+getattr 00000000fe3dfea0 1
+getfile 00000000fe3dfea0
+getfile 00000000fe3dfea0 -> sz 0
+   getattr -> 0
+we have got the correspend attr of b48268
+   unique: 19, success, outsize: 160
+unique: 20, opcode: IOCTL (39), nodeid: 4265475744, insize: 72
+   unique: 20, error: -38 (Function not implemented), outsize: 16
+unique: 21, opcode: GETATTR (3), nodeid: 4265475744, insize: 56
+getattr 00000000fe3dfea0 1
+getfile 00000000fe3dfea0
+getfile 00000000fe3dfea0 -> sz 0
+   getattr -> 0
+   unique: 21, success, outsize: 120
+unique: 22, opcode: WRITE (16), nodeid: 4265475744, insize: 4176
+getfile 00000000fe3dfea0
+getfile 00000000fe3dfea0 -> sz 0
+file is too small, old size = 0, new size = 4096
+setfile 00000000fe3dfea0
+set size of 4265475744 to 4096
+extent_client::setattr 4265475744 4096
+   unique: 22, success, outsize: 24
+unique: 23, opcode: WRITE (16), nodeid: 4265475744, insize: 95
+getfile 00000000fe3dfea0
+getfile 00000000fe3dfea0 -> sz 4096
+file is too small, old size = 4096, new size = 4111
+setfile 00000000fe3dfea0
+set size of 4265475744 to 4111
+extent_client::setattr 4265475744 4111
+terminate called after throwing an instance of 'std::out_of_range'
+  what():  basic_string::insert: __pos (which is 4096) > this->size() (which is 0)

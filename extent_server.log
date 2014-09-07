@@ -1,0 +1,4 @@
+extent_server::setattr set 3914833344 size to 0
+extent_server::setattr set 4265475744 size to 0
+extent_server::setattr set 4265475744 size to 0
+set file 4265475744 size from 4096 to 0

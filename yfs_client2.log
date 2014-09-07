@@ -1,0 +1,48 @@
+FUSE library version: 2.8.6
+unique: 1, opcode: INIT (26), nodeid: 0, insize: 56
+INIT: 7.22
+flags=0x0000f7fb
+max_readahead=0x00020000
+   INIT: 7.12
+   flags=0x00000000
+   max_readahead=0x00020000
+   max_write=0x00020000
+   unique: 1, success, outsize: 40
+unique: 2, opcode: GETATTR (3), nodeid: 1, insize: 56
+getattr 0000000000000001 0
+getdir 0000000000000001
+   getattr -> 1410079787 1410079787 1410079774
+   unique: 2, success, outsize: 120
+unique: 3, opcode: GETATTR (3), nodeid: 1, insize: 56
+getattr 0000000000000001 0
+getdir 0000000000000001
+   getattr -> 1410079787 1410079787 1410079774
+   unique: 3, success, outsize: 120
+unique: 4, opcode: OPENDIR (27), nodeid: 1, insize: 48
+   unique: 4, success, outsize: 32
+unique: 5, opcode: READDIR (28), nodeid: 1, insize: 80
+fuseserver_readdir
+   unique: 5, success, outsize: 80
+unique: 6, opcode: LOOKUP (1), nodeid: 1, insize: 51
+fuse wants to look up the dic 1, file name .gitignore
+the result of the look up is 0
+   unique: 6, error: -2 (No such file or directory), outsize: 16
+unique: 7, opcode: LOOKUP (1), nodeid: 1, insize: 47
+fuse wants to look up the dic 1, file name a48268
+the result of the look up is 1
+getattr 00000000e9579dc0 1
+getfile 00000000e9579dc0
+getfile 00000000e9579dc0 -> sz 600
+   getattr -> 600
+   unique: 7, success, outsize: 144
+unique: 8, opcode: GETATTR (3), nodeid: 3914833344, insize: 56
+getattr 00000000e9579dc0 1
+getfile 00000000e9579dc0
+getfile 00000000e9579dc0 -> sz 600
+   getattr -> 600
+   unique: 8, success, outsize: 120
+unique: 9, opcode: RELEASEDIR (29), nodeid: 1, insize: 64
+   unique: 9, success, outsize: 16
+unique: 10, opcode: FORGET (2), nodeid: 3914833344, insize: 48
+unique: 11, opcode: FORGET (2), nodeid: 1, insize: 48
+umount: /share/yc/yfs-class/yfs2: not mounted

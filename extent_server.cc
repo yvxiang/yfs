@@ -32,7 +32,7 @@ int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
       file_it->second.file_attr.atime = file_it->second.file_attr.mtime
                                         = time(NULL);
                         
-      file_it->second.file_attr.size = (unsigned int)cur_time;
+      file_it->second.file_attr.size = buf.size();
       pthread_mutex_unlock(&operation_lock);
       return extent_protocol::OK;
   }
@@ -40,7 +40,8 @@ int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
   time_t cur_time;
   time(&cur_time);
   new_file.file_attr.atime = new_file.file_attr.ctime = time(NULL);
-  new_file.file_attr.size = buf.size();
+  new_file.file_attr.size = 0;
+  new_file.content = "";
   file_map.insert(std::make_pair<extent_protocol::extentid_t, file>(id, new_file));
   pthread_mutex_unlock(&operation_lock);
   return extent_protocol::OK;
@@ -95,22 +96,28 @@ int extent_server::getattr(extent_protocol::extentid_t id, extent_protocol::attr
 }
 
 int extent_server::setattr(extent_protocol::extentid_t id, 
-                                        extent_protocol::attr &a)
+                                       extent_protocol::attr &a)
 {
+    printf("extent_server::setattr set %llu size to %u\n", id, a.size);
     
     pthread_mutex_lock(&operation_lock); 
     std::map<extent_protocol::extentid_t, file>::iterator file_it;
 
     if((file_it = file_map.find(id)) != file_map.end()) {
 
-        file_it->second.file_attr.size = a.size;
         file_it->second.file_attr.atime = a.atime;
         file_it->second.file_attr.ctime = a.ctime;
         file_it->second.file_attr.mtime = a.mtime;
-        if(a.size < file_it->second.content.size()) {
+        if(a.size < file_it->second.file_attr.size) {
+            printf("set file %llu size from %u to %u\n", id, file_it->second.file_attr.size, a.size); 
+            file_it->second.file_attr.size = a.size;
             file_it->second.content.resize(a.size);
-        } else if(a.size > file_it->second.content.size()) {
+        } else if(a.size > file_it->second.file_attr.size) {
+            printf("file is too small, old size is %u\n", file_it->second.content.size());
+            file_it->second.file_attr.size = a.size;
             file_it->second.content.resize(a.size, '\0');
+            printf("file is larger, new size is %u\n", a.size);
+            printf("set file %llu size from %u to %u\n", id, file_it->second.file_attr.size, a.size); 
         }
 
         pthread_mutex_unlock(&operation_lock);

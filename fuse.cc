@@ -212,6 +212,7 @@ fuseserver_write(fuse_req_t req, fuse_ino_t ino,
       return ;
   }
   if(f_in.size < off + size) {
+      printf("file is too small, old size = %d, new size = %d\n", f_in.size, off + size);
       f_in.size = off + size;
       yfs->setfile(ino, f_in);
   }

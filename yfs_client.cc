@@ -79,6 +79,7 @@ yfs_client::setfile(inum inum, fileinfo file_info)
     int r = OK;
 
   printf("setfile %016llx\n", inum);
+  printf("set size of %llu to %u\n", inum, file_info.size);
   extent_protocol::attr a;
   a.size = file_info.size;
   a.atime = file_info.atime;
