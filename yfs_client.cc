@@ -274,9 +274,9 @@ yfs_client::write(inum inum, std::string str, off_t off,
     if(ret != OK)   return ret;
     if(off >= file_con.size())
         file_con.resize(off);
-    printf("in yfs_client::write old %s\n", file_con.c_str());
+    //printf("in yfs_client::write old %s\n", file_con.c_str());
     file_con.replace(off, str.size(), str);
-    printf("in yfs_client::write new %s\n", file_con.c_str());
+    //printf("in yfs_client::write new %s\n", file_con.c_str());
     size = str.size();
     ret = put(inum, file_con);
     return ret;

@@ -247,11 +247,11 @@ fuseserver_createhelper(fuse_ino_t parent, const char *name,
 
   e->ino = new_file;
   struct stat new_file_attr;
-  printf("we want to  got the correspend attr of %s\n", name);
+  //printf("we want to  got the correspend attr of %s\n", name);
   ret = getattr(new_file, new_file_attr);
 
   if(ret != yfs_client::OK) return ret;
-  printf("we have got the correspend attr of %s\n", name);
+  //printf("we have got the correspend attr of %s\n", name);
   e->attr = new_file_attr;
 
   return yfs_client::OK;
@@ -309,12 +309,16 @@ fuseserver_lookup(fuse_req_t req, fuse_ino_t parent, const char *name)
   yfs_client::inum parent_num = parent;
   yfs_client::inum file_num;
 
-  printf("fuse wants to look up the dic %lld, file name %s\n", parent, name);
+  //printf("fuse wants to look up the dic %lld, file name %s\n", parent, name);
   found = yfs->lookup(parent_num, std::string(name), file_num);
-  printf("the result of the look up is %d\n", found);
+  //printf("the result of the look up is %d\n", found);
 
   if (found) {
     int ret = getattr(file_num, e.attr);
+    if(ret != yfs_client::OK) {
+        fuse_reply_err(req, ENOENT);
+        return ;
+    }
     e.ino = file_num;
     fuse_reply_entry(req, &e);
   } else {

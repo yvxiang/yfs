@@ -26,8 +26,8 @@ int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
   std::map<extent_protocol::extentid_t, file>::iterator file_it;
 
   if((file_it = file_map.find(id)) != file_map.end()) {
-      printf("in extent_server::put old %s\n", file_it->second.content.c_str());
-      printf("in extent_server::put new %s\n", buf.c_str());
+      //printf("in extent_server::put old %s\n", file_it->second.content.c_str());
+      //printf("in extent_server::put new %s\n", buf.c_str());
       file_it->second.content = buf;
       file_it->second.file_attr.atime = file_it->second.file_attr.mtime
                                         = time(NULL);
@@ -107,15 +107,15 @@ int extent_server::setattr(extent_protocol::extentid_t id,
         file_it->second.file_attr.ctime = a.ctime;
         file_it->second.file_attr.mtime = a.mtime;
         if(a.size < file_it->second.file_attr.size) {
-            printf("set file %llu size from %u to %u\n", id, file_it->second.file_attr.size, a.size); 
+            //printf("set file %llu size from %u to %u\n", id, file_it->second.file_attr.size, a.size); 
             file_it->second.file_attr.size = a.size;
             file_it->second.content.resize(a.size);
         } else if(a.size > file_it->second.file_attr.size) {
-            printf("file is too small, old size is %u\n", file_it->second.content.size());
+            //printf("file is too small, old size is %u\n", file_it->second.content.size());
             file_it->second.file_attr.size = a.size;
             file_it->second.content.resize(a.size, '\0');
-            printf("file is larger, new size is %u\n", a.size);
-            printf("set file %llu size from %u to %u\n", id, file_it->second.file_attr.size, a.size); 
+            //printf("file is larger, new size is %u\n", a.size);
+            //printf("set file %llu size from %u to %u\n", id, file_it->second.file_attr.size, a.size); 
         }
 
         pthread_mutex_unlock(&operation_lock);
