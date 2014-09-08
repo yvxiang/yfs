@@ -29,7 +29,7 @@ int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
       //printf("in extent_server::put old %s\n", file_it->second.content.c_str());
       //printf("in extent_server::put new %s\n", buf.c_str());
       file_it->second.content = buf;
-      file_it->second.file_attr.atime = file_it->second.file_attr.mtime
+      file_it->second.file_attr.ctime = file_it->second.file_attr.mtime
                                         = time(NULL);
                         
       file_it->second.file_attr.size = buf.size();
@@ -37,7 +37,8 @@ int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
       return extent_protocol::OK;
   }
   file new_file;
-  new_file.file_attr.atime = new_file.file_attr.ctime = time(NULL);
+  new_file.file_attr.atime = new_file.file_attr.ctime = 
+                            new_file.file_attr.mtime = time(NULL);
   new_file.file_attr.size = 0;
   new_file.content = "";
   file_map.insert(std::make_pair<extent_protocol::extentid_t, file>(id, new_file));
@@ -138,9 +139,11 @@ int extent_server::remove(extent_protocol::extentid_t id, int &)
 
   if((file_it = file_map.find(id)) != file_map.end()) {
       file_map.erase(file_it);
+      //printf("success remove file %llu\n", id);
       pthread_mutex_unlock(&operation_lock);
       return extent_protocol::OK;
   } else {
+      //printf("couldn't find the file %llu to remove\n", id);
       pthread_mutex_unlock(&operation_lock);
       return extent_protocol::NOENT;
   }

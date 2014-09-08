@@ -288,6 +288,66 @@ yfs_client::write(inum inum, std::string str, off_t off,
   return ret;   
 }
 
+int
+yfs_client::mkdir(inum parent_inum, std::string file_name,
+                                        inum &new_file_inum)
+{
+    int ret = create(parent_inum, file_name, new_file_inum, true);
+    return ret;
+}
+
+int
+yfs_client::remove(inum inum)
+{
+    return ec->remove(inum);
+}
+
+int
+yfs_client::unlink(inum parent_inum, std::string file_name)
+{
+    std::string dir_con;
+    int ret = get(parent_inum, dir_con);
+    if(ret != yfs_client::OK)   return ret;
+
+    //printf("dir con is :\n");
+    //printf("%s\n", dir_con.c_str());
+    //printf("to delete %s\n", file_name.c_str());
+    size_t pos = dir_con.find(file_name, 0);
+
+    if(pos == std::string::npos)  {
+     //   printf("could not find the file!!!\n");
+        return yfs_client::NOENT;
+    }
+
+    size_t file_num_pos = pos + file_name.size() + 1;
+    inum file_inum = 0;
+    while(file_num_pos < dir_con.size() &&
+                            dir_con[file_num_pos] != ' ') {
+        file_inum = file_inum * 10 + 
+                        dir_con[file_num_pos] - '0';
+    //    printf("cur_file_inum %u\n", file_inum);
+        file_num_pos++;
+    }
+
+    // judge the pos because maybe we are unlinking the first
+    //or the middle or the last file int the dic, be carefully!!
+    if(file_num_pos < dir_con.size()) {
+        file_num_pos++;
+    } else if(file_num_pos == dir_con.size()) {
+        if(pos > 0)
+            pos--;
+    }
+    
+    dir_con.erase(pos, file_num_pos - pos);
+    //printf("new dir is :\n");
+    //printf("%s %d\n", dir_con.c_str(), dir_con.size());
+    put(parent_inum, dir_con);
+    //now begin to remove the actural file content
+    ret = remove(file_inum);
+    //printf("yfs_client::unlink remove %u returns %d\n", file_inum, ret);
+    return ret;
+
+}
 
 
 
