@@ -180,6 +180,7 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     // now pick up a inum for the new file(dic)
 //    srandom(getpid());
    // int tmp_num;
+    srand(getpid());
     if(is_dir) {
         new_file_inum = rand() & 0x7FFFFFFF;
     } else {
