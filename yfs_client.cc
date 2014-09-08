@@ -143,8 +143,8 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     if(!isdir(parent_num)) return IOERR;
     std::string dir_con;
     
-    char mod = 'a';
-    FILE *fp = fopen("/share/yc/log", &mod);
+    //char mod = 'a';
+    //FILE *fp = fopen("/share/yc/log", &mod);
   
     int ret = get(parent_num, dir_con);
     if(ret != OK)  return ret;
@@ -180,7 +180,8 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     // now pick up a inum for the new file(dic)
 //    srandom(getpid());
    // int tmp_num;
-    srand(getpid());
+    //srand(getpid());
+    //srand(time(NULL));
     if(is_dir) {
         new_file_inum = rand() & 0x7FFFFFFF;
     } else {
@@ -207,7 +208,7 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     ret = put(new_file_inum, cur_file_con);
     //fprintf(fp, "we have touch the new file %s, %d\n", n, new_file_inum);
 
-    fclose(fp);
+    //fclose(fp);
     return OK;
 
 }

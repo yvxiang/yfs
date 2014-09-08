@@ -204,8 +204,8 @@ fuseserver_write(fuse_req_t req, fuse_ino_t ino,
 {
   // You fill this in for Lab 2
   // Change the above line to "#if 1", and your code goes here
-  printf("wants to write %s\n", buf);
-  printf("conve to %s\n", std::string(buf).substr(0, size).c_str());
+  //printf("wants to write %s\n", buf);
+  //printf("conve to %s\n", std::string(buf, size).c_str());
   int ret = yfs->write(ino, std::string(buf, size), off, size);  
   if(ret != yfs_client::OK) {
       fuse_reply_err(req, ENOENT);
