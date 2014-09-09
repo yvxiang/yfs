@@ -11,6 +11,7 @@
 
 class yfs_client {
   extent_client *ec;
+  lock_client lc;
  public:
 
   typedef unsigned long long inum;
@@ -33,6 +34,12 @@ class yfs_client {
     yfs_client::inum inum;
   };
 
+  struct file_list {
+      std::string name;
+      yfs_client::inum inum;
+  };
+
+
  private:
   static std::string filename(inum);
   static inum n2i(std::string);
@@ -44,7 +51,21 @@ class yfs_client {
   bool isdir(inum);
 
   int getfile(inum, fileinfo &);
+  int setfile(inum, fileinfo);
   int getdir(inum, dirinfo &);
+
+
+  int get(inum, std::string&);
+  int put(inum, std::string);
+  int create(inum, std::string, inum &, bool is_dir = false);
+  bool lookup(inum, std::string, inum&);
+  int read(inum, std::string&, size_t&, off_t);
+  int write(inum, std::string, off_t, size_t&);
+  int mkdir(inum, std::string, inum&);
+  int unlink(inum, std::string); 
+  int remove(inum); 
+  void release_lk(inum); // ugly code, should be removed
+ 
 };
 
 #endif 
