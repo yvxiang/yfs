@@ -11,6 +11,7 @@
 
 class yfs_client {
   extent_client *ec;
+  lock_client lc;
  public:
 
   typedef unsigned long long inum;
@@ -62,8 +63,8 @@ class yfs_client {
   int write(inum, std::string, off_t, size_t&);
   int mkdir(inum, std::string, inum&);
   int unlink(inum, std::string); 
-  int remove(inum); //std::string here just for 
-  //convenient, ignore it
+  int remove(inum); 
+  void release_lk(inum); // ugly code, should be removed
  
 };
 

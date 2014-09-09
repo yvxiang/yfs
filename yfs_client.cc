@@ -11,7 +11,7 @@
 #include <fcntl.h>
 
 
-yfs_client::yfs_client(std::string extent_dst, std::string lock_dst)
+yfs_client::yfs_client(std::string extent_dst, std::string lock_dst):lc(lock_dst)
 {
   ec = new extent_client(extent_dst);
   /*
@@ -60,6 +60,8 @@ yfs_client::getfile(inum inum, fileinfo &fin)
 
   printf("getfile %016llx\n", inum);
   extent_protocol::attr a;
+  lc.acquire(inum);
+  //printf("yfs_client.cc getattr get lock %u\n", inum);
   if (ec->getattr(inum, a) != extent_protocol::OK) {
     r = IOERR;
     goto release;
@@ -69,10 +71,11 @@ yfs_client::getfile(inum inum, fileinfo &fin)
   fin.mtime = a.mtime;
   fin.ctime = a.ctime;
   fin.size = a.size;
-  printf("getfile %016llx -> sz %llu\n", inum, fin.size);
+  //printf("getfile %016llx -> sz %llu\n", inum, fin.size);
 
  release:
-
+  //printf("yfs_client.cc getattr release lock %u\n", inum);
+  lc.release(inum);
   return r;
 }
 
@@ -80,9 +83,10 @@ int
 yfs_client::setfile(inum inum, fileinfo file_info)
 {
     int r = OK;
-
+  lc.acquire(inum);
+  printf("yfs_client setfile get lock %u\n", inum);
   printf("setfile %016llx\n", inum);
-  printf("set size of %llu to %u\n", inum, file_info.size);
+  //printf("set size of %llu to %u\n", inum, file_info.size);
   extent_protocol::attr a;
   a.size = file_info.size;
   a.atime = file_info.atime;
@@ -92,10 +96,13 @@ yfs_client::setfile(inum inum, fileinfo file_info)
       r = IOERR;
       goto release;
   }
+  lc.release(inum);
+  //printf("yfs_client setfile release lock %u\n", inum);
   return OK;
-
+  
  release:
-
+  //printf("yfs_client setfile release lock %u\n", inum);
+  lc.release(inum);
   return r;
 }
 
@@ -108,6 +115,8 @@ yfs_client::getdir(inum inum, dirinfo &din)
 
   printf("getdir %016llx\n", inum);
   extent_protocol::attr a;
+  lc.acquire(inum);
+  //printf("yfs_client getdir get lock %u\n", inum);
   if (ec->getattr(inum, a) != extent_protocol::OK) {
     r = IOERR;
     goto release;
@@ -117,6 +126,8 @@ yfs_client::getdir(inum inum, dirinfo &din)
   din.ctime = a.ctime;
 
  release:
+  //printf("yfs_client getdir release lock %u\n", inum);
+  lc.release(inum);
   return r;
 }
 
@@ -124,6 +135,8 @@ int
 yfs_client::get(inum file_num, std::string &file_con)
 {
     //printf("want to get file in yfs_client\n");
+    lc.acquire(file_num);
+    //printf("yfs_client.cc get get lock %u\n", file_num);
     int ret = ec->get(file_num, file_con);
     //printf("yfs_client get file returns %d\n");
 //    return ec->get(file_num, file_con);
@@ -133,7 +146,11 @@ yfs_client::get(inum file_num, std::string &file_con)
 int
 yfs_client::put(inum file_num, std::string file_con)
 {
-    return ec->put(file_num, file_con);
+  //  lc.acquire(file_num);
+    int ret =  ec->put(file_num, file_con);
+   // lc.release(file_num);
+    return ret;
+
 }
 
 int 
@@ -145,9 +162,14 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     
     //char mod = 'a';
     //FILE *fp = fopen("/share/yc/log", &mod);
-  
+//    printf("%u want to create %s, want to get lock\n", getpid(), new_file_name.c_str());
     int ret = get(parent_num, dir_con);
-    if(ret != OK)  return ret;
+ //   printf("%u want to create %s, has get lock\n", getpid(),  new_file_name.c_str());
+    if(ret != OK) {
+        //printf("yfs_client.cc create release lock %u\n");
+        lc.release(parent_num);
+        return ret;
+    }
     /*
     fprintf(fp, "old dic con\n");
     fprintf(fp, "------------\n");
@@ -155,6 +177,7 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     fprintf(fp, "%s\n", old);
     fprintf(fp, "------------\n");
     */
+//    printf("want to create %s\n", new_file_name.c_str());
     std::string::iterator end = dir_con.begin();
     std::string cur_file_name;
     std::string cur_file_con;
@@ -165,7 +188,9 @@ yfs_client::create(inum parent_num, std::string new_file_name,
         }
         end++;
         if(cur_file_name == new_file_name) {
-            printf("file already exists!!!\n");
+        //    printf("file already exists!!!\n");
+        //printf("yfs_client.cc create release lock %u\n");
+            lc.release(parent_num);
             return EXIST;
         }
         while(end != dir_con.end() && *end != ' ')
@@ -203,9 +228,18 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     fprintf(fp, "%s\n", c_dic);
     fprintf(fp, "--------\n");
     */
-    if(ret != OK)   return ret;
-
+    if(ret != OK) {
+        //printf("yfs_client.cc create release lock %u\n");
+        lc.release(parent_num);
+        return ret;
+    }
+     
     ret = put(new_file_inum, cur_file_con);
+   // lc.release(new_file_inum);
+   // printf("%u want to create %s, has create, next to release lock\n", getpid(), new_file_name.c_str());
+        //printf("yfs_client.cc create release lock %u\n");
+    lc.release(parent_num);
+   // printf("%u want to create %s, has release lock\n", getpid(), new_file_name.c_str());
     //fprintf(fp, "we have touch the new file %s, %d\n", n, new_file_inum);
 
     //fclose(fp);
@@ -220,7 +254,11 @@ yfs_client::lookup(inum parent_num, std::string file_name, inum &file_num)
 
     std::string dir_con;
     int ret = get(parent_num, dir_con);
-    if(ret != yfs_client::OK)   return ret;
+    if(ret != yfs_client::OK) {
+        //printf("yfs_client lookup release lock %u\n", parent_num);
+        lc.release(parent_num);
+        return ret;
+    }
 
     std::string::iterator end = dir_con.begin();
     std::string cur_file_name = "";
@@ -231,8 +269,10 @@ yfs_client::lookup(inum parent_num, std::string file_name, inum &file_num)
             cur_file_name += *end;
             end++;
         }
-        if(end == dir_con.end())
+        if(end == dir_con.end()) {
+            lc.release(parent_num);
             return false;
+        }
         end++;
         inum cur_file_num = 0;
         while(end != dir_con.end() && *end != ' ') {
@@ -245,14 +285,20 @@ yfs_client::lookup(inum parent_num, std::string file_name, inum &file_num)
         */
         if(file_name == cur_file_name) {
             file_num = cur_file_num;
+        //printf("yfs_client lookup release lock %u\n", parent_num);
+            lc.release(parent_num);
             return true;
         }
         if(end == dir_con.end()) {
             //printf("couldn't find\n");
+        //printf("yfs_client lookup release lock %u\n", parent_num);
+            lc.release(parent_num);
             return false;
         }
         end++;
     }
+        //printf("yfs_client lookup release lock %u\n", parent_num);
+    lc.release(parent_num);
     return false;
 }
     
@@ -261,6 +307,8 @@ yfs_client::read(inum inum, std::string &buf, size_t &size,
                                                 off_t off)
 {
     int ret = get(inum, buf);
+    //printf("yfs_client.cc read release lock %u\n", inum);
+    lc.release(inum);
     if(ret != OK)   return ret;
     if(off >= buf.size()) {
         buf = "";
@@ -278,7 +326,13 @@ yfs_client::write(inum inum, std::string str, off_t off,
     if(!isfile(inum))   return IOERR;
     std::string file_con; 
     int ret = get(inum, file_con);
-    if(ret != OK)   return ret;
+
+    if(ret != OK) { 
+        //printf("yfs_client.cc write release lock %u\n");
+        lc.release(inum);
+        return ret;
+    }
+
     if(off >= file_con.size())
         file_con.resize(off);
     //printf("in yfs_client::write old %s\n", file_con.c_str());
@@ -286,6 +340,8 @@ yfs_client::write(inum inum, std::string str, off_t off,
     //printf("in yfs_client::write new %s\n", file_con.c_str());
     size = str.size();
     ret = put(inum, file_con);
+        //printf("yfs_client.cc write release lock %u\n");
+    lc.release(inum);
     return ret;
   return ret;   
 }
@@ -301,7 +357,12 @@ yfs_client::mkdir(inum parent_inum, std::string file_name,
 int
 yfs_client::remove(inum inum)
 {
-    return ec->remove(inum);
+    lc.acquire(inum);
+    //printf("yfs_client.cc remove acquire lock %u\n", inum);
+    int ret = ec->remove(inum);
+    lc.release(inum);
+    //printf("yfs_client.cc remove release lock %u\n", inum);
+    return ret;
 }
 
 int
@@ -309,7 +370,11 @@ yfs_client::unlink(inum parent_inum, std::string file_name)
 {
     std::string dir_con;
     int ret = get(parent_inum, dir_con);
-    if(ret != yfs_client::OK)   return ret;
+    if(ret != yfs_client::OK) {
+        //printf("yfs_client.cc unlink release lock %u\n", parent_inum);
+        lc.release(parent_inum);
+        return ret;
+    }
 
     //printf("dir con is :\n");
     //printf("%s\n", dir_con.c_str());
@@ -318,6 +383,7 @@ yfs_client::unlink(inum parent_inum, std::string file_name)
 
     if(pos == std::string::npos)  {
      //   printf("could not find the file!!!\n");
+        lc.release(parent_inum);
         return yfs_client::NOENT;
     }
 
@@ -344,6 +410,8 @@ yfs_client::unlink(inum parent_inum, std::string file_name)
     //printf("new dir is :\n");
     //printf("%s %d\n", dir_con.c_str(), dir_con.size());
     put(parent_inum, dir_con);
+    //printf("yfs_client.cc unlink release lock %u\n", parent_inum);
+    lc.release(parent_inum);
     //now begin to remove the actural file content
     ret = remove(file_inum);
     //printf("yfs_client::unlink remove %u returns %d\n", file_inum, ret);
@@ -351,6 +419,11 @@ yfs_client::unlink(inum parent_inum, std::string file_name)
 
 }
 
-
+void
+yfs_client::release_lk(inum dir_inum)
+{
+    lc.release(dir_inum);
+    //printf("yfs_client.cc release_lk release lock %u\n", dir_inum);
+}
 
 

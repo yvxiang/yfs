@@ -133,6 +133,7 @@ fuseserver_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
     std::string file_con;
     int ret = yfs->get(ino, file_con);
     if(ret != yfs_client::OK) {
+        yfs->release_lk(ino);
         fuse_reply_err(req, ENOSYS);
         return ;
     }
@@ -143,6 +144,7 @@ fuseserver_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
         file_con.resize(to_set);
     }
     ret = yfs->put(ino, file_con);
+    yfs->release_lk(ino);
     if(ret != yfs_client::OK) {
         fuse_reply_err(req, ENOSYS);
         return ;
@@ -249,7 +251,8 @@ fuseserver_createhelper(fuse_ino_t parent, const char *name,
 
   e->ino = new_file;
   struct stat new_file_attr;
-  //printf("we want to  got the correspend attr of %s\n", name);
+ // printf("we want to  got the correspend attr of %s\n", name);
+  //printf("this need a lock\n");
   ret = getattr(new_file, new_file_attr);
 
   if(ret != yfs_client::OK) return ret;
@@ -385,6 +388,7 @@ fuseserver_readdir(fuse_req_t req, fuse_ino_t ino, size_t size,
 
   // You fill this in for Lab 2
   std::string dir_cont;
+  //printf("fuse.cc readdir acquire lock %u\n", ino);
   yfs->get(ino, dir_cont);
 
   std::string::iterator end = dir_cont.begin();
@@ -411,8 +415,10 @@ fuseserver_readdir(fuse_req_t req, fuse_ino_t ino, size_t size,
           break;
       end++;
   }
-
+  //yfs->lc.release(ino);
   reply_buf_limited(req, b.p, b.size, off, size);
+  yfs->release_lk(ino);
+  //printf("fuse.cc readdir release lock %u\n", ino);
   free(b.p);
 }
 
@@ -456,7 +462,7 @@ fuseserver_mkdir(fuse_req_t req, fuse_ino_t parent, const char *name,
       fuse_reply_err(req, EEXIST);
       return ;
   }
-  printf("fuse.cc::mkdir success\n");
+  //printf("fuse.cc::mkdir success\n");
   e.ino = new_file_inum;
   getattr(new_file_inum, e.attr);
   fuse_reply_entry(req, &e);
