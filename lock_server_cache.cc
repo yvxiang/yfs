@@ -23,7 +23,7 @@ int lock_server_cache::acquire(lock_protocol::lockid_t lid, std::string id,
   std::map<lock_protocol::lockid_t, lock_stat>::iterator it;
   std::string client_to_revoke;
   pthread_mutex_lock(&lock_stat_map_lock);
-  printf("server: %s want to get lock %u\n", id.c_str() ,lid);
+//  printf("server: %s want to get lock %u\n", id.c_str() ,lid);
 
 
   it = lock_stat_map.find(lid);
@@ -38,7 +38,7 @@ int lock_server_cache::acquire(lock_protocol::lockid_t lid, std::string id,
           client_to_revoke = it->second.holder;
       }
   } else {
-  printf("server: %s get lock %u\n", id.c_str() ,lid);
+  //printf("server: %s get lock %u\n", id.c_str() ,lid);
       ret = lock_protocol::OK;
       it->second.waiter.erase(id);
       it->second.holded = true;
