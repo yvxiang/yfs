@@ -680,7 +680,7 @@ rpcs::checkduplicate_and_update(unsigned int clt_nonce, unsigned int xid,
             return INPROGRESS;
         }
     }
-    if(xid <= xid_rep) {
+    if(xid <= max_rep_xid[clt_nonce]) {
         return FORGOTTEN;
     } else {
         it = clt->second.begin();
