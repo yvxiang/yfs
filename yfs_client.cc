@@ -62,8 +62,7 @@ yfs_client::getfile(inum inum, fileinfo &fin)
   extent_protocol::attr a;
   lc.acquire(inum);
   //printf("yfs_client.cc getattr get lock %u\n", inum);
-  if (ec->getattr(inum, a) != extent_protocol::OK) {
-    r = IOERR;
+  if ((r = ec->getattr(inum, a)) != extent_protocol::OK) {
     goto release;
   }
 
