@@ -8,141 +8,480 @@ max_readahead=0x00020000
    max_readahead=0x00020000
    max_write=0x00020000
    unique: 1, success, outsize: 40
-unique: 2, opcode: GETATTR (3), nodeid: 1, insize: 56
-getattr 0000000000000001 0
-getdir 0000000000000001
-   getattr -> 4323680 0 144
-   unique: 2, success, outsize: 120
-unique: 3, opcode: LOOKUP (1), nodeid: 1, insize: 48
-   unique: 3, error: -2 (No such file or directory), outsize: 16
-unique: 4, opcode: MKDIR (9), nodeid: 1, insize: 56
-getattr 00000000441a1611 0
-getdir 00000000441a1611
-   getattr -> 34130944 0 135168
+unique: 2, opcode: LOOKUP (1), nodeid: 1, insize: 46
+   unique: 2, error: -2 (No such file or directory), outsize: 16
+unique: 3, opcode: MKDIR (9), nodeid: 1, insize: 54
+extent_client::put
+d5639 563469546
+extent_client::put
+
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205824 0 135168
+   unique: 3, success, outsize: 144
+unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
    unique: 4, success, outsize: 144
-unique: 5, opcode: LOOKUP (1), nodeid: 1, insize: 48
-   unique: 5, error: -2 (No such file or directory), outsize: 16
-unique: 6, opcode: MKDIR (9), nodeid: 1, insize: 56
-getattr 000000003f439f0c 0
-getdir 000000003f439f0c
-   getattr -> 34130944 0 135168
+unique: 5, opcode: ACCESS (34), nodeid: 563469546, insize: 48
+   unique: 5, error: -38 (Function not implemented), outsize: 16
+unique: 6, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
    unique: 6, success, outsize: 144
-unique: 7, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 00000000441a1611 0
-getdir 00000000441a1611
-   getattr -> 34131160 0 3965210683
-   unique: 7, success, outsize: 144
-unique: 8, opcode: ACCESS (34), nodeid: 1142560273, insize: 48
-   unique: 8, error: -38 (Function not implemented), outsize: 16
-unique: 9, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 00000000441a1611 0
-getdir 00000000441a1611
-   getattr -> 34131160 0 3965210683
-   unique: 9, success, outsize: 144
-unique: 10, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 000000003f439f0c 0
-getdir 000000003f439f0c
-   getattr -> 34131160 0 3965210683
-   unique: 10, success, outsize: 144
-unique: 11, opcode: LOOKUP (1), nodeid: 1142560273, insize: 45
-getattr 000000000000002d 0
-getdir 000000000000002d
-   getattr -> 3575789304 32563 3965210683
-   unique: 11, success, outsize: 144
-unique: 12, opcode: LOOKUP (1), nodeid: 1061396236, insize: 45
-getattr 000000000000002d 0
-getdir 000000000000002d
-   getattr -> 3575789304 32563 3965210683
-   unique: 12, success, outsize: 144
-unique: 13, opcode: LOOKUP (1), nodeid: 1, insize: 48
-   unique: 13, error: -2 (No such file or directory), outsize: 16
-unique: 14, opcode: MKDIR (9), nodeid: 1, insize: 56
-getattr 000000002a659d83 0
-getdir 000000002a659d83
-   getattr -> 34130944 0 135168
+unique: 7, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 7, error: -2 (No such file or directory), outsize: 16
+unique: 8, opcode: CREATE (35), nodeid: 563469546, insize: 59
+extent_client::put
+f1 3385402021
+extent_client::put
+
+getattr 00000000c9c922a5 1
+getfile 00000000c9c922a5
+   getattr -> 32767
+   unique: 8, success, outsize: 160
+unique: 9, opcode: GETXATTR (22), nodeid: 3385402021, insize: 68
+   unique: 9, error: -38 (Function not implemented), outsize: 16
+unique: 10, opcode: WRITE (16), nodeid: 3385402021, insize: 83
+want to write 3385402021, old size is 3
+extent_client::put
+aaa
+write to 3385402021, new size = 3
+   unique: 10, success, outsize: 24
+unique: 11, opcode: FLUSH (25), nodeid: 3385402021, insize: 64
+   unique: 11, error: -38 (Function not implemented), outsize: 16
+unique: 12, opcode: RELEASE (18), nodeid: 3385402021, insize: 64
+   unique: 12, success, outsize: 16
+unique: 13, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
+   unique: 13, success, outsize: 144
+unique: 14, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 00000000c9c922a5 1
+getfile 00000000c9c922a5
+   getattr -> 32767
    unique: 14, success, outsize: 144
-unique: 15, opcode: OPENDIR (27), nodeid: 1, insize: 48
+unique: 15, opcode: OPEN (14), nodeid: 3385402021, insize: 48
    unique: 15, success, outsize: 32
-unique: 16, opcode: READDIR (28), nodeid: 1, insize: 80
-fuseserver_readdir
-   unique: 16, success, outsize: 112
-unique: 17, opcode: LOOKUP (1), nodeid: 1, insize: 51
-   unique: 17, error: -2 (No such file or directory), outsize: 16
-unique: 18, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 00000000441a1611 0
-getdir 00000000441a1611
-   getattr -> 2 0 34131216
+unique: 16, opcode: READ (15), nodeid: 3385402021, insize: 80
+   unique: 16, success, outsize: 19
+unique: 17, opcode: RELEASE (18), nodeid: 3385402021, insize: 64
+   unique: 17, success, outsize: 16
+unique: 18, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205928 0 3163892939
    unique: 18, success, outsize: 144
-unique: 19, opcode: GETATTR (3), nodeid: 1142560273, insize: 56
-getattr 00000000441a1611 0
-getdir 00000000441a1611
-   getattr -> 2 0 34131216
-   unique: 19, success, outsize: 120
-unique: 20, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 00000000441a1611 0
-getdir 00000000441a1611
-   getattr -> 2 0 34131216
-   unique: 20, success, outsize: 144
-unique: 21, opcode: OPENDIR (27), nodeid: 1142560273, insize: 48
-   unique: 21, success, outsize: 32
-unique: 22, opcode: READDIR (28), nodeid: 1142560273, insize: 80
-fuseserver_readdir
+unique: 19, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 00000000c9c922a5 1
+getfile 00000000c9c922a5
+   getattr -> 32767
+   unique: 19, success, outsize: 144
+unique: 20, opcode: OPEN (14), nodeid: 3385402021, insize: 48
+   unique: 20, success, outsize: 32
+unique: 21, opcode: READ (15), nodeid: 3385402021, insize: 80
+   unique: 21, success, outsize: 19
+unique: 22, opcode: RELEASE (18), nodeid: 3385402021, insize: 64
    unique: 22, success, outsize: 16
-unique: 23, opcode: RELEASEDIR (29), nodeid: 1142560273, insize: 64
-   unique: 23, success, outsize: 16
-unique: 24, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 000000003f439f0c 0
-getdir 000000003f439f0c
-   getattr -> 2 0 34130752
+unique: 23, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205272 0 3163892939
+   unique: 23, success, outsize: 144
+unique: 24, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 00000000c9c922a5 1
+getfile 00000000c9c922a5
+   getattr -> 32767
    unique: 24, success, outsize: 144
-unique: 25, opcode: GETATTR (3), nodeid: 1061396236, insize: 56
-getattr 000000003f439f0c 0
-getdir 000000003f439f0c
-   getattr -> 2 0 34130752
-   unique: 25, success, outsize: 120
-unique: 26, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 000000003f439f0c 0
-getdir 000000003f439f0c
-   getattr -> 2 0 34130752
-   unique: 26, success, outsize: 144
-unique: 27, opcode: OPENDIR (27), nodeid: 1061396236, insize: 48
-   unique: 27, success, outsize: 32
-unique: 28, opcode: READDIR (28), nodeid: 1061396236, insize: 80
-fuseserver_readdir
-   unique: 28, success, outsize: 16
-unique: 29, opcode: RELEASEDIR (29), nodeid: 1061396236, insize: 64
-   unique: 29, success, outsize: 16
-unique: 30, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 000000002a659d83 0
-getdir 000000002a659d83
-   getattr -> 34132984 0 3965210683
-   unique: 30, success, outsize: 144
-unique: 31, opcode: GETATTR (3), nodeid: 711302531, insize: 56
-getattr 000000002a659d83 0
-getdir 000000002a659d83
-   getattr -> 0 0 711302531
-   unique: 31, success, outsize: 120
-unique: 32, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 000000002a659d83 0
-getdir 000000002a659d83
-   getattr -> 34132984 0 3965210683
+unique: 25, opcode: UNLINK (10), nodeid: 563469546, insize: 43
+extent_client::put
+
+   unique: 25, success, outsize: 16
+unique: 26, opcode: FORGET (2), nodeid: 3385402021, insize: 48
+unique: 27, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
+   unique: 27, success, outsize: 144
+unique: 28, opcode: LOOKUP (1), nodeid: 563469546, insize: 44
+   unique: 28, error: -2 (No such file or directory), outsize: 16
+unique: 29, opcode: CREATE (35), nodeid: 563469546, insize: 60
+extent_client::put
+fx1 3000541855
+extent_client::put
+
+getattr 00000000b2d8a29f 1
+getfile 00000000b2d8a29f
+   getattr -> 32767
+   unique: 29, success, outsize: 160
+unique: 30, opcode: WRITE (16), nodeid: 3000541855, insize: 83
+want to write 3000541855, old size is 3
+extent_client::put
+fxx
+write to 3000541855, new size = 3
+   unique: 30, success, outsize: 24
+unique: 31, opcode: RELEASE (18), nodeid: 3000541855, insize: 64
+   unique: 31, success, outsize: 16
+unique: 32, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
    unique: 32, success, outsize: 144
-unique: 33, opcode: OPENDIR (27), nodeid: 711302531, insize: 48
-   unique: 33, success, outsize: 32
-unique: 34, opcode: READDIR (28), nodeid: 711302531, insize: 80
-fuseserver_readdir
+unique: 33, opcode: LOOKUP (1), nodeid: 563469546, insize: 44
+getattr 00000000b2d8a29f 1
+getfile 00000000b2d8a29f
+   getattr -> 32767
+   unique: 33, success, outsize: 144
+unique: 34, opcode: UNLINK (10), nodeid: 563469546, insize: 44
+extent_client::put
+
    unique: 34, success, outsize: 16
-unique: 35, opcode: RELEASEDIR (29), nodeid: 711302531, insize: 64
-   unique: 35, success, outsize: 16
-unique: 36, opcode: READDIR (28), nodeid: 1, insize: 80
+unique: 35, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205928 0 3163892939
+   unique: 35, success, outsize: 144
+unique: 36, opcode: FORGET (2), nodeid: 3000541855, insize: 48
+unique: 37, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 37, error: -2 (No such file or directory), outsize: 16
+unique: 38, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205928 0 3163892939
+   unique: 38, success, outsize: 144
+unique: 39, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 39, error: -2 (No such file or directory), outsize: 16
+unique: 40, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205928 0 3163892939
+   unique: 40, success, outsize: 144
+unique: 41, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 41, error: -2 (No such file or directory), outsize: 16
+unique: 42, opcode: CREATE (35), nodeid: 563469546, insize: 59
+extent_client::put
+f2 3352347245
+extent_client::put
+
+getattr 00000000c7d0c26d 1
+getfile 00000000c7d0c26d
+   getattr -> 32767
+   unique: 42, success, outsize: 160
+unique: 43, opcode: WRITE (16), nodeid: 3352347245, insize: 83
+want to write 3352347245, old size is 3
+extent_client::put
+222
+write to 3352347245, new size = 3
+   unique: 43, success, outsize: 24
+unique: 44, opcode: RELEASE (18), nodeid: 3352347245, insize: 64
+   unique: 44, success, outsize: 16
+unique: 45, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205928 0 3163892939
+   unique: 45, success, outsize: 144
+unique: 46, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 00000000c7d0c26d 1
+getfile 00000000c7d0c26d
+   getattr -> 32767
+   unique: 46, success, outsize: 144
+unique: 47, opcode: UNLINK (10), nodeid: 563469546, insize: 43
+extent_client::put
+
+   unique: 47, success, outsize: 16
+unique: 48, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205272 0 3163892939
+   unique: 48, success, outsize: 144
+unique: 49, opcode: FORGET (2), nodeid: 3352347245, insize: 48
+unique: 50, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 50, error: -2 (No such file or directory), outsize: 16
+unique: 51, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205272 0 3163892939
+   unique: 51, success, outsize: 144
+unique: 52, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 52, error: -2 (No such file or directory), outsize: 16
+unique: 53, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205272 0 3163892939
+   unique: 53, success, outsize: 144
+unique: 54, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 54, error: -2 (No such file or directory), outsize: 16
+unique: 55, opcode: CREATE (35), nodeid: 563469546, insize: 59
+extent_client::put
+f3 2349633124
+extent_client::put
+
+getattr 000000008c0c8e64 1
+getfile 000000008c0c8e64
+   getattr -> 32767
+   unique: 55, success, outsize: 160
+unique: 56, opcode: WRITE (16), nodeid: 2349633124, insize: 83
+want to write 2349633124, old size is 3
+extent_client::put
+333
+write to 2349633124, new size = 3
+   unique: 56, success, outsize: 24
+unique: 57, opcode: RELEASE (18), nodeid: 2349633124, insize: 64
+   unique: 57, success, outsize: 16
+unique: 58, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205272 0 3163892939
+   unique: 58, success, outsize: 144
+unique: 59, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 000000008c0c8e64 1
+getfile 000000008c0c8e64
+   getattr -> 32767
+   unique: 59, success, outsize: 144
+unique: 60, opcode: OPEN (14), nodeid: 2349633124, insize: 48
+   unique: 60, success, outsize: 32
+unique: 61, opcode: READ (15), nodeid: 2349633124, insize: 80
+   unique: 61, success, outsize: 19
+unique: 62, opcode: RELEASE (18), nodeid: 2349633124, insize: 64
+   unique: 62, success, outsize: 16
+unique: 63, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
+   unique: 63, success, outsize: 144
+unique: 64, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 000000008c0c8e64 1
+getfile 000000008c0c8e64
+   getattr -> 32767
+   unique: 64, success, outsize: 144
+unique: 65, opcode: OPEN (14), nodeid: 2349633124, insize: 48
+   unique: 65, success, outsize: 32
+unique: 66, opcode: READ (15), nodeid: 2349633124, insize: 80
+   unique: 66, success, outsize: 19
+unique: 67, opcode: RELEASE (18), nodeid: 2349633124, insize: 64
+   unique: 67, success, outsize: 16
+unique: 68, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205928 0 3163892939
+   unique: 68, success, outsize: 144
+unique: 69, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 000000008c0c8e64 1
+getfile 000000008c0c8e64
+   getattr -> 32767
+   unique: 69, success, outsize: 144
+unique: 70, opcode: UNLINK (10), nodeid: 563469546, insize: 43
+extent_client::put
+
+   unique: 70, success, outsize: 16
+unique: 71, opcode: FORGET (2), nodeid: 2349633124, insize: 48
+unique: 72, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205272 0 3163892939
+   unique: 72, success, outsize: 144
+unique: 73, opcode: LOOKUP (1), nodeid: 563469546, insize: 44
+   unique: 73, error: -2 (No such file or directory), outsize: 16
+unique: 74, opcode: CREATE (35), nodeid: 563469546, insize: 60
+extent_client::put
+fx2 3040450251
+extent_client::put
+
+getattr 00000000b53996cb 1
+getfile 00000000b53996cb
+   getattr -> 32767
+   unique: 74, success, outsize: 160
+unique: 75, opcode: WRITE (16), nodeid: 3040450251, insize: 82
+want to write 3040450251, old size is 2
+extent_client::put
+22
+write to 3040450251, new size = 2
+   unique: 75, success, outsize: 24
+unique: 76, opcode: RELEASE (18), nodeid: 3040450251, insize: 64
+   unique: 76, success, outsize: 16
+unique: 77, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205272 0 3163892939
+   unique: 77, success, outsize: 144
+unique: 78, opcode: LOOKUP (1), nodeid: 563469546, insize: 44
+getattr 00000000b53996cb 1
+getfile 00000000b53996cb
+   getattr -> 32767
+   unique: 78, success, outsize: 144
+unique: 79, opcode: UNLINK (10), nodeid: 563469546, insize: 44
+extent_client::put
+
+   unique: 79, success, outsize: 16
+unique: 80, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
+   unique: 80, success, outsize: 144
+unique: 81, opcode: FORGET (2), nodeid: 3040450251, insize: 48
+unique: 82, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 82, error: -2 (No such file or directory), outsize: 16
+unique: 83, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
+   unique: 83, success, outsize: 144
+unique: 84, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 84, error: -2 (No such file or directory), outsize: 16
+unique: 85, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
+   unique: 85, success, outsize: 144
+unique: 86, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+   unique: 86, error: -2 (No such file or directory), outsize: 16
+unique: 87, opcode: CREATE (35), nodeid: 563469546, insize: 59
+extent_client::put
+f1 4132451954
+extent_client::put
+
+getattr 00000000f6503672 1
+getfile 00000000f6503672
+   getattr -> 32767
+   unique: 87, success, outsize: 160
+unique: 88, opcode: WRITE (16), nodeid: 4132451954, insize: 83
+want to write 4132451954, old size is 3
+extent_client::put
+aaa
+write to 4132451954, new size = 3
+   unique: 88, success, outsize: 24
+unique: 89, opcode: RELEASE (18), nodeid: 4132451954, insize: 64
+   unique: 89, success, outsize: 16
+unique: 90, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205656 0 3163892939
+   unique: 90, success, outsize: 144
+unique: 91, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 00000000f6503672 1
+getfile 00000000f6503672
+   getattr -> 32767
+   unique: 91, success, outsize: 144
+unique: 92, opcode: OPEN (14), nodeid: 4132451954, insize: 48
+   unique: 92, success, outsize: 32
+unique: 93, opcode: WRITE (16), nodeid: 4132451954, insize: 81
+want to write 4132451954, old size is 1
+extent_client::put
+aaa
+write to 4132451954, new size = 1
+   unique: 93, success, outsize: 24
+unique: 94, opcode: WRITE (16), nodeid: 4132451954, insize: 82
+want to write 4132451954, old size is 2
+extent_client::put
+aaa
+write to 4132451954, new size = 2
+   unique: 94, success, outsize: 24
+unique: 95, opcode: RELEASE (18), nodeid: 4132451954, insize: 64
+   unique: 95, success, outsize: 16
+unique: 96, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
+   unique: 96, success, outsize: 144
+unique: 97, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 00000000f6503672 1
+getfile 00000000f6503672
+   getattr -> 32767
+   unique: 97, success, outsize: 144
+unique: 98, opcode: OPEN (14), nodeid: 4132451954, insize: 48
+   unique: 98, success, outsize: 32
+unique: 99, opcode: WRITE (16), nodeid: 4132451954, insize: 81
+want to write 4132451954, old size is 1
+extent_client::put
+aaa
+write to 4132451954, new size = 1
+   unique: 99, success, outsize: 24
+unique: 100, opcode: WRITE (16), nodeid: 4132451954, insize: 82
+want to write 4132451954, old size is 2
+extent_client::put
+aaa
+write to 4132451954, new size = 2
+   unique: 100, success, outsize: 24
+unique: 101, opcode: RELEASE (18), nodeid: 4132451954, insize: 64
+   unique: 101, success, outsize: 16
+unique: 102, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32198744 0 3163892939
+   unique: 102, success, outsize: 144
+unique: 103, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 00000000f6503672 1
+getfile 00000000f6503672
+   getattr -> 32767
+   unique: 103, success, outsize: 144
+unique: 104, opcode: OPEN (14), nodeid: 4132451954, insize: 48
+   unique: 104, success, outsize: 32
+unique: 105, opcode: READ (15), nodeid: 4132451954, insize: 80
+   unique: 105, success, outsize: 32784
+unique: 106, opcode: RELEASE (18), nodeid: 4132451954, insize: 64
+   unique: 106, success, outsize: 16
+unique: 107, opcode: OPENDIR (27), nodeid: 1, insize: 48
+   unique: 107, success, outsize: 32
+unique: 108, opcode: READDIR (28), nodeid: 1, insize: 80
 fuseserver_readdir
-   unique: 36, success, outsize: 16
-unique: 37, opcode: RELEASEDIR (29), nodeid: 1, insize: 64
-   unique: 37, success, outsize: 16
-unique: 38, opcode: GETATTR (3), nodeid: 1, insize: 56
+   unique: 108, success, outsize: 48
+unique: 109, opcode: LOOKUP (1), nodeid: 1, insize: 51
+   unique: 109, error: -2 (No such file or directory), outsize: 16
+unique: 110, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205656 0 3163892939
+   unique: 110, success, outsize: 144
+unique: 111, opcode: GETATTR (3), nodeid: 563469546, insize: 56
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 0 0 563469546
+   unique: 111, success, outsize: 120
+unique: 112, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205656 0 3163892939
+   unique: 112, success, outsize: 144
+unique: 113, opcode: OPENDIR (27), nodeid: 563469546, insize: 48
+   unique: 113, success, outsize: 32
+unique: 114, opcode: READDIR (28), nodeid: 563469546, insize: 80
+fuseserver_readdir
+   unique: 114, success, outsize: 48
+unique: 115, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205928 0 3163892939
+   unique: 115, success, outsize: 144
+unique: 116, opcode: LOOKUP (1), nodeid: 563469546, insize: 51
+   unique: 116, error: -2 (No such file or directory), outsize: 16
+unique: 117, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 32205928 0 3163892939
+   unique: 117, success, outsize: 144
+unique: 118, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 00000000f6503672 1
+getfile 00000000f6503672
+   getattr -> 32767
+   unique: 118, success, outsize: 144
+unique: 119, opcode: GETATTR (3), nodeid: 4132451954, insize: 56
+getattr 00000000f6503672 1
+getfile 00000000f6503672
+   getattr -> 0
+   unique: 119, success, outsize: 120
+unique: 120, opcode: RELEASEDIR (29), nodeid: 563469546, insize: 64
+   unique: 120, success, outsize: 16
+unique: 121, opcode: RELEASEDIR (29), nodeid: 1, insize: 64
+   unique: 121, success, outsize: 16
+unique: 122, opcode: GETATTR (3), nodeid: 1, insize: 56
 getattr 0000000000000001 0
 getdir 0000000000000001
-   getattr -> 1410531799 1410531799 34130752
-   unique: 38, success, outsize: 120
-unique: 39, opcode: FORGET (2), nodeid: 711302531, insize: 48
+   getattr -> 4132451954 0 0
+   unique: 122, success, outsize: 120
+unique: 123, opcode: FORGET (2), nodeid: 4132451954, insize: 48
+unique: 124, opcode: FORGET (2), nodeid: 563469546, insize: 48
+unique: 125, opcode: FORGET (2), nodeid: 1, insize: 48
 umount: /share/yc/yfs-class/yfs1: not mounted

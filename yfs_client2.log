@@ -8,59 +8,65 @@ max_readahead=0x00020000
    max_readahead=0x00020000
    max_write=0x00020000
    unique: 1, success, outsize: 40
-unique: 2, opcode: GETATTR (3), nodeid: 1, insize: 56
-getattr 0000000000000001 0
-getdir 0000000000000001
-   getattr -> 4323680 0 144
-   unique: 2, success, outsize: 120
-unique: 3, opcode: LOOKUP (1), nodeid: 1, insize: 48
-   unique: 3, error: -2 (No such file or directory), outsize: 16
-unique: 4, opcode: MKDIR (9), nodeid: 1, insize: 56
-getattr 0000000043857c96 0
-getdir 0000000043857c96
-   getattr -> 39697408 0 135168
-   unique: 4, success, outsize: 144
-unique: 5, opcode: LOOKUP (1), nodeid: 1, insize: 48
-   unique: 5, error: -2 (No such file or directory), outsize: 16
-unique: 6, opcode: OPENDIR (27), nodeid: 1, insize: 48
-   unique: 6, success, outsize: 32
-unique: 7, opcode: READDIR (28), nodeid: 1, insize: 80
+unique: 2, opcode: OPENDIR (27), nodeid: 1, insize: 48
+   unique: 2, success, outsize: 32
+unique: 3, opcode: READDIR (28), nodeid: 1, insize: 80
 fuseserver_readdir
-   unique: 7, success, outsize: 48
-unique: 8, opcode: LOOKUP (1), nodeid: 1, insize: 51
-   unique: 8, error: -2 (No such file or directory), outsize: 16
-unique: 9, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 0000000043857c96 0
-getdir 0000000043857c96
-   getattr -> 39697688 0 3693090875
-   unique: 9, success, outsize: 144
-unique: 10, opcode: GETATTR (3), nodeid: 1132821654, insize: 56
-getattr 0000000043857c96 0
-getdir 0000000043857c96
-   getattr -> 0 0 1132821654
-   unique: 10, success, outsize: 120
-unique: 11, opcode: LOOKUP (1), nodeid: 1, insize: 48
-getattr 0000000043857c96 0
-getdir 0000000043857c96
-   getattr -> 39697688 0 3693090875
-   unique: 11, success, outsize: 144
-unique: 12, opcode: OPENDIR (27), nodeid: 1132821654, insize: 48
-   unique: 12, success, outsize: 32
-unique: 13, opcode: READDIR (28), nodeid: 1132821654, insize: 80
+   unique: 3, success, outsize: 48
+unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 51
+   unique: 4, error: -2 (No such file or directory), outsize: 16
+unique: 5, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 4321480 0 144
+   unique: 5, success, outsize: 144
+unique: 6, opcode: GETATTR (3), nodeid: 563469546, insize: 56
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 0 0 563469546
+   unique: 6, success, outsize: 120
+unique: 7, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 35334616 0 3767339035
+   unique: 7, success, outsize: 144
+unique: 8, opcode: OPENDIR (27), nodeid: 563469546, insize: 48
+   unique: 8, success, outsize: 32
+unique: 9, opcode: READDIR (28), nodeid: 563469546, insize: 80
 fuseserver_readdir
-   unique: 13, success, outsize: 16
-unique: 14, opcode: RELEASEDIR (29), nodeid: 1132821654, insize: 64
-   unique: 14, success, outsize: 16
-unique: 15, opcode: READDIR (28), nodeid: 1, insize: 80
-fuseserver_readdir
+   unique: 9, success, outsize: 48
+unique: 10, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 35335144 0 3767339035
+   unique: 10, success, outsize: 144
+unique: 11, opcode: LOOKUP (1), nodeid: 563469546, insize: 51
+   unique: 11, error: -2 (No such file or directory), outsize: 16
+unique: 12, opcode: LOOKUP (1), nodeid: 1, insize: 46
+getattr 000000002195dcea 0
+getdir 000000002195dcea
+   getattr -> 35335144 0 3767339035
+   unique: 12, success, outsize: 144
+unique: 13, opcode: LOOKUP (1), nodeid: 563469546, insize: 43
+getattr 00000000f6503672 1
+getfile 00000000f6503672
+   getattr -> 32767
+   unique: 13, success, outsize: 144
+unique: 14, opcode: GETATTR (3), nodeid: 4132451954, insize: 56
+getattr 00000000f6503672 1
+getfile 00000000f6503672
+   getattr -> 0
+   unique: 14, success, outsize: 120
+unique: 15, opcode: RELEASEDIR (29), nodeid: 563469546, insize: 64
    unique: 15, success, outsize: 16
 unique: 16, opcode: RELEASEDIR (29), nodeid: 1, insize: 64
    unique: 16, success, outsize: 16
 unique: 17, opcode: GETATTR (3), nodeid: 1, insize: 56
 getattr 0000000000000001 0
 getdir 0000000000000001
-   getattr -> 1410531799 1410531799 39697216
+   getattr -> 4132451954 0 0
    unique: 17, success, outsize: 120
-unique: 18, opcode: FORGET (2), nodeid: 1132821654, insize: 48
-unique: 19, opcode: FORGET (2), nodeid: 1, insize: 48
+unique: 18, opcode: FORGET (2), nodeid: 4132451954, insize: 48
+unique: 19, opcode: FORGET (2), nodeid: 563469546, insize: 48
+unique: 20, opcode: FORGET (2), nodeid: 1, insize: 48
 umount: /share/yc/yfs-class/yfs2: not mounted

@@ -332,7 +332,7 @@ yfs_client::write(inum inum, std::string str, off_t off,
         lc.release(inum);
         return ret;
     }
-
+    printf("want to write %u, old size is %d\n", inum, size);
     if(off >= file_con.size())
         file_con.resize(off);
     //printf("in yfs_client::write old %s\n", file_con.c_str());
@@ -340,6 +340,7 @@ yfs_client::write(inum inum, std::string str, off_t off,
     //printf("in yfs_client::write new %s\n", file_con.c_str());
     size = str.size();
     ret = put(inum, file_con);
+    printf("write to %u, new size = %d\n", inum, size);
         //printf("yfs_client.cc write release lock %u\n");
     lc.release(inum);
     return ret;
