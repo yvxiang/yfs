@@ -57,7 +57,6 @@ extent_client::getattr(extent_protocol::extentid_t eid,
   ret = cl->call(extent_protocol::getattr, eid, attr);
   */ 
   
-  
   std::map<extent_protocol::extentid_t, file>::iterator it;
   it = file_cache.find(eid);
   if(it != file_cache.end()) {
@@ -66,9 +65,8 @@ extent_client::getattr(extent_protocol::extentid_t eid,
       attr.ctime = it->second.file_attr.ctime;
       attr.mtime = it->second.file_attr.mtime;
   } else {
-      printf("fuck it is not in cache %u\n, eid");
+      printf("ERROR it is not in cache %u\n, eid");
   }
-  
   
   return ret;
 }
@@ -88,7 +86,6 @@ extent_client::setattr(extent_protocol::extentid_t eid,
 
     std::map<extent_protocol::extentid_t, file>::iterator it;
     it = file_cache.find(eid);
-    printf("call setattr\n");
     if(it != file_cache.end()) {
         it->second.file_attr.size = attr.size;
         it->second.file_attr.atime = attr.atime;
@@ -110,30 +107,8 @@ extent_client::put(extent_protocol::extentid_t eid, std::string buf)
   printf("extent_client::put\n%s\n", buf.c_str());
   */
 
-  
   std::map<extent_protocol::extentid_t, file>::iterator it;
   it = file_cache.find(eid);
-  /*
-  if(it != file_cache.end()) {
-      //printf("put to cache %u\n", eid);
-      //printf("cache %u old size %d\n", eid, it->second.content.size());
-      it->second.content = buf;
-      //printf("cache %u new size %d\n", eid, it->second.content.size());
-      it->second.dirty = true;
-      it->second.file_attr.mtime = it->second.file_attr.ctime
-                                    = time(NULL);
-      it->second.file_attr.size = it->second.content.size();
-  } else {
-      //printf("create a new file or dic %u\n", eid);
-      file_cache.insert(std::make_pair(eid, file(buf)));
-      it = file_cache.find(eid);
-      it->second.dirty = true;
-      it->second.content = buf;
-      it->second.file_attr.mtime = it->second.file_attr.atime
-                        = it->second.file_attr.ctime = time(NULL);
-      it->second.file_attr.size = it->second.content.size();
-  }
-  */
   if(it == file_cache.end()) {
       file_cache.insert(std::make_pair(eid, file(buf)));
       it = file_cache.find(eid);
@@ -144,7 +119,6 @@ extent_client::put(extent_protocol::extentid_t eid, std::string buf)
                         = it->second.file_attr.ctime = time(NULL);
   it->second.file_attr.size = it->second.content.size();
   
- 
   return ret;
 }
 

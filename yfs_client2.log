@@ -11,8 +11,10 @@ max_readahead=0x00020000
 unique: 2, opcode: GETATTR (3), nodeid: 1, insize: 56
 getattr 0000000000000001 0
 getdir 0000000000000001
-fuck it is not in cache 4029271392
+ERROR it is not in cache 1095023424
 , eid   getattr -> 4323936 0 144
    unique: 2, success, outsize: 120
-unique: 3, opcode: FORGET (2), nodeid: 1, insize: 48
+unique: 3, opcode: LOOKUP (1), nodeid: 1, insize: 47
+   unique: 3, error: -2 (No such file or directory), outsize: 16
+unique: 4, opcode: FORGET (2), nodeid: 1, insize: 48
 umount: /share/yc/yfs-class/yfs2: not mounted
