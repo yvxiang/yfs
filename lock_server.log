@@ -1,0 +1,8 @@
+1410531783898:	handler_mgr::get_handle trying to bind...127.0.0.1:34371
+1410531783898:	handle_mgr::get_handle bind succeeded 127.0.0.1:34371
+RPC STATS: 1:2 7001:2 7002:1 
+1410531783899:	handler_mgr::get_handle trying to bind...127.0.0.1:50996
+1410531783899:	handle_mgr::get_handle bind succeeded 127.0.0.1:50996
+RPC STATS: 1:2 7001:7 7002:1 
+RPC STATS: 1:2 7001:11 7002:2 
+RPC STATS: 1:2 7001:14 7002:4 

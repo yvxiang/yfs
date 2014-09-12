@@ -8,5 +8,141 @@ max_readahead=0x00020000
    max_readahead=0x00020000
    max_write=0x00020000
    unique: 1, success, outsize: 40
-unique: 2, opcode: FORGET (2), nodeid: 1, insize: 48
+unique: 2, opcode: GETATTR (3), nodeid: 1, insize: 56
+getattr 0000000000000001 0
+getdir 0000000000000001
+   getattr -> 4323680 0 144
+   unique: 2, success, outsize: 120
+unique: 3, opcode: LOOKUP (1), nodeid: 1, insize: 48
+   unique: 3, error: -2 (No such file or directory), outsize: 16
+unique: 4, opcode: MKDIR (9), nodeid: 1, insize: 56
+getattr 00000000441a1611 0
+getdir 00000000441a1611
+   getattr -> 34130944 0 135168
+   unique: 4, success, outsize: 144
+unique: 5, opcode: LOOKUP (1), nodeid: 1, insize: 48
+   unique: 5, error: -2 (No such file or directory), outsize: 16
+unique: 6, opcode: MKDIR (9), nodeid: 1, insize: 56
+getattr 000000003f439f0c 0
+getdir 000000003f439f0c
+   getattr -> 34130944 0 135168
+   unique: 6, success, outsize: 144
+unique: 7, opcode: LOOKUP (1), nodeid: 1, insize: 48
+getattr 00000000441a1611 0
+getdir 00000000441a1611
+   getattr -> 34131160 0 3965210683
+   unique: 7, success, outsize: 144
+unique: 8, opcode: ACCESS (34), nodeid: 1142560273, insize: 48
+   unique: 8, error: -38 (Function not implemented), outsize: 16
+unique: 9, opcode: LOOKUP (1), nodeid: 1, insize: 48
+getattr 00000000441a1611 0
+getdir 00000000441a1611
+   getattr -> 34131160 0 3965210683
+   unique: 9, success, outsize: 144
+unique: 10, opcode: LOOKUP (1), nodeid: 1, insize: 48
+getattr 000000003f439f0c 0
+getdir 000000003f439f0c
+   getattr -> 34131160 0 3965210683
+   unique: 10, success, outsize: 144
+unique: 11, opcode: LOOKUP (1), nodeid: 1142560273, insize: 45
+getattr 000000000000002d 0
+getdir 000000000000002d
+   getattr -> 3575789304 32563 3965210683
+   unique: 11, success, outsize: 144
+unique: 12, opcode: LOOKUP (1), nodeid: 1061396236, insize: 45
+getattr 000000000000002d 0
+getdir 000000000000002d
+   getattr -> 3575789304 32563 3965210683
+   unique: 12, success, outsize: 144
+unique: 13, opcode: LOOKUP (1), nodeid: 1, insize: 48
+   unique: 13, error: -2 (No such file or directory), outsize: 16
+unique: 14, opcode: MKDIR (9), nodeid: 1, insize: 56
+getattr 000000002a659d83 0
+getdir 000000002a659d83
+   getattr -> 34130944 0 135168
+   unique: 14, success, outsize: 144
+unique: 15, opcode: OPENDIR (27), nodeid: 1, insize: 48
+   unique: 15, success, outsize: 32
+unique: 16, opcode: READDIR (28), nodeid: 1, insize: 80
+fuseserver_readdir
+   unique: 16, success, outsize: 112
+unique: 17, opcode: LOOKUP (1), nodeid: 1, insize: 51
+   unique: 17, error: -2 (No such file or directory), outsize: 16
+unique: 18, opcode: LOOKUP (1), nodeid: 1, insize: 48
+getattr 00000000441a1611 0
+getdir 00000000441a1611
+   getattr -> 2 0 34131216
+   unique: 18, success, outsize: 144
+unique: 19, opcode: GETATTR (3), nodeid: 1142560273, insize: 56
+getattr 00000000441a1611 0
+getdir 00000000441a1611
+   getattr -> 2 0 34131216
+   unique: 19, success, outsize: 120
+unique: 20, opcode: LOOKUP (1), nodeid: 1, insize: 48
+getattr 00000000441a1611 0
+getdir 00000000441a1611
+   getattr -> 2 0 34131216
+   unique: 20, success, outsize: 144
+unique: 21, opcode: OPENDIR (27), nodeid: 1142560273, insize: 48
+   unique: 21, success, outsize: 32
+unique: 22, opcode: READDIR (28), nodeid: 1142560273, insize: 80
+fuseserver_readdir
+   unique: 22, success, outsize: 16
+unique: 23, opcode: RELEASEDIR (29), nodeid: 1142560273, insize: 64
+   unique: 23, success, outsize: 16
+unique: 24, opcode: LOOKUP (1), nodeid: 1, insize: 48
+getattr 000000003f439f0c 0
+getdir 000000003f439f0c
+   getattr -> 2 0 34130752
+   unique: 24, success, outsize: 144
+unique: 25, opcode: GETATTR (3), nodeid: 1061396236, insize: 56
+getattr 000000003f439f0c 0
+getdir 000000003f439f0c
+   getattr -> 2 0 34130752
+   unique: 25, success, outsize: 120
+unique: 26, opcode: LOOKUP (1), nodeid: 1, insize: 48
+getattr 000000003f439f0c 0
+getdir 000000003f439f0c
+   getattr -> 2 0 34130752
+   unique: 26, success, outsize: 144
+unique: 27, opcode: OPENDIR (27), nodeid: 1061396236, insize: 48
+   unique: 27, success, outsize: 32
+unique: 28, opcode: READDIR (28), nodeid: 1061396236, insize: 80
+fuseserver_readdir
+   unique: 28, success, outsize: 16
+unique: 29, opcode: RELEASEDIR (29), nodeid: 1061396236, insize: 64
+   unique: 29, success, outsize: 16
+unique: 30, opcode: LOOKUP (1), nodeid: 1, insize: 48
+getattr 000000002a659d83 0
+getdir 000000002a659d83
+   getattr -> 34132984 0 3965210683
+   unique: 30, success, outsize: 144
+unique: 31, opcode: GETATTR (3), nodeid: 711302531, insize: 56
+getattr 000000002a659d83 0
+getdir 000000002a659d83
+   getattr -> 0 0 711302531
+   unique: 31, success, outsize: 120
+unique: 32, opcode: LOOKUP (1), nodeid: 1, insize: 48
+getattr 000000002a659d83 0
+getdir 000000002a659d83
+   getattr -> 34132984 0 3965210683
+   unique: 32, success, outsize: 144
+unique: 33, opcode: OPENDIR (27), nodeid: 711302531, insize: 48
+   unique: 33, success, outsize: 32
+unique: 34, opcode: READDIR (28), nodeid: 711302531, insize: 80
+fuseserver_readdir
+   unique: 34, success, outsize: 16
+unique: 35, opcode: RELEASEDIR (29), nodeid: 711302531, insize: 64
+   unique: 35, success, outsize: 16
+unique: 36, opcode: READDIR (28), nodeid: 1, insize: 80
+fuseserver_readdir
+   unique: 36, success, outsize: 16
+unique: 37, opcode: RELEASEDIR (29), nodeid: 1, insize: 64
+   unique: 37, success, outsize: 16
+unique: 38, opcode: GETATTR (3), nodeid: 1, insize: 56
+getattr 0000000000000001 0
+getdir 0000000000000001
+   getattr -> 1410531799 1410531799 34130752
+   unique: 38, success, outsize: 120
+unique: 39, opcode: FORGET (2), nodeid: 711302531, insize: 48
 umount: /share/yc/yfs-class/yfs1: not mounted

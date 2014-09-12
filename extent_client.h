@@ -3,13 +3,22 @@
 #ifndef extent_client_h
 #define extent_client_h
 
+#include <map>
 #include <string>
 #include "extent_protocol.h"
 #include "rpc.h"
 
 class extent_client {
+ public:
+  struct file {
+      bool dirty;
+      std::string content;
+      extent_protocol::attr file_attr;
+      file(std::string &buf) : dirty(false), content(buf) {}
+  };
  private:
   rpcc *cl;
+  std::map<extent_protocol::extentid_t, file> file_cache;
 
  public:
   extent_client(std::string dst);
