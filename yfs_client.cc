@@ -11,9 +11,12 @@
 #include <fcntl.h>
 
 
-yfs_client::yfs_client(std::string extent_dst, std::string lock_dst):lc(lock_dst)
+yfs_client::yfs_client(std::string extent_dst, std::string lock_dst)
+                            :lc(lock_dst)
 {
   ec = new extent_client(extent_dst);
+  lrh = new lock_release_handler(ec);
+  lc.set_lu_pointer(lrh);
   /*
   put(0x00000001, "");
   printf("success create root\n");

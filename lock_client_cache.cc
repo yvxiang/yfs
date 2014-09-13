@@ -10,7 +10,7 @@
 
 
 lock_client_cache::lock_client_cache(std::string xdst, 
-				     class lock_release_user *_lu)
+				     lock_release_handler *_lu)
   : lock_client(xdst), lu(_lu)
 {
   rpcs *rlsrpc = new rpcs(0);
@@ -92,6 +92,9 @@ lock_client_cache::release(lock_protocol::lockid_t lid)
           it->second.revoke = false;
           it->second.ls = RELEASING;
 
+         // firsh flush it out 
+          lu->dorelease(lid);
+
           pthread_mutex_unlock(&lock_stat_map_lock);
 
           int r;
@@ -123,6 +126,8 @@ lock_client_cache::revoke_handler(lock_protocol::lockid_t lid,
       if(it->second.ls == FREE) {
           it->second.ls = RELEASING;
           it->second.revoke = false;
+
+          lu->dorelease(lid);
 
           pthread_mutex_unlock(&lock_stat_map_lock);
 
@@ -158,4 +163,16 @@ lock_client_cache::retry_handler(lock_protocol::lockid_t lid,
 
   pthread_mutex_unlock(&lock_stat_map_lock);
   return ret;
+}
+
+void
+lock_release_handler::dorelease(lock_protocol::lockid_t lid)
+{
+
+    release_ec_pointer->flush(lid);
+}
+void
+lock_client_cache::set_lu_pointer(lock_release_handler *p)
+{
+    lu = p;
 }

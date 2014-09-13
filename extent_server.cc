@@ -39,8 +39,8 @@ int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)
   file new_file;
   new_file.file_attr.atime = new_file.file_attr.ctime = 
                             new_file.file_attr.mtime = time(NULL);
-  new_file.file_attr.size = 0;
-  new_file.content = "";
+  new_file.file_attr.size = buf.size();
+  new_file.content = buf;
   file_map.insert(std::make_pair<extent_protocol::extentid_t, file>(id, new_file));
   pthread_mutex_unlock(&operation_lock);
   return extent_protocol::OK;
