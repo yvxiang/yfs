@@ -1,3 +1,5 @@
+#include <unistd.h>
+#include <sys/types.h>
 #include "rpc.h"
 #include <arpa/inet.h>
 #include <stdlib.h>

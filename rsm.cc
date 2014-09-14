@@ -78,6 +78,9 @@
 // The rule is that a module releases its internal locks before it
 // upcalls, but can keep its locks when calling down.
 
+#include <unistd.h>
+#include <sys/types.h>
+
 #include <fstream>
 #include <iostream>
 
