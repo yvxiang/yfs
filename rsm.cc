@@ -251,16 +251,19 @@ rsm::join(std::string m) {
   VERIFY(pthread_mutex_unlock(&rsm_mutex)==0);
   rpcc *cl = h.safebind();
   if (cl != 0) {
+    tprintf("y:we are going to call jionreq\n");
     ret = cl->call(rsm_protocol::joinreq, cfg->myaddr(), last_myvs, 
 		   r, rpcc::to(120000));
   }
+  tprintf("y:joinreq returns here, the value is %d\n", ret); 
   VERIFY(pthread_mutex_lock(&rsm_mutex)==0);
-
+  tprintf("y:joinreq returns, the value is %d\n", ret); 
   if (cl == 0 || ret != rsm_protocol::OK) {
     tprintf("rsm::join: couldn't reach %s %p %d\n", m.c_str(), 
 	   cl, ret);
     return false;
   }
+  tprintf("y:we are here, joinreq succeeded\n");
   tprintf("rsm::join: succeeded %s\n", r.log.c_str());
   cfg->restore(r.log);
   return true;
@@ -385,6 +388,7 @@ rsm::joinreq(std::string m, viewstamp last, rsm_protocol::joinres &r)
       ret = rsm_protocol::BUSY;
     }
   }
+  tprintf("y:joinreq goes here, returns %d\n", ret);
   return ret;
 }
 
