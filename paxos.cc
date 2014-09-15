@@ -283,6 +283,7 @@ acceptor::preparereq(std::string src, paxos_protocol::preparearg a,
       n_h = a.n;
       r.n_a = n_a;
       r.v_a = v_a;
+      l->logprop(n_h);
   } else {
       r.oldinstance = false;
       r.accept = false;
@@ -304,6 +305,7 @@ acceptor::acceptreq(std::string src, paxos_protocol::acceptarg a, bool &r)
   if(a.n >= n_h) {
       n_a = a.n;
       v_a = a.v;
+      l->logaccept(n_a, v_a);
       ret = paxos_protocol::OK;
   } else 
       ret = paxos_protocol::ERR;
