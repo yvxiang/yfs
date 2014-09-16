@@ -165,13 +165,18 @@ proposer::prepare(unsigned instance, std::vector<std::string> &accepts,
 
 
   for(cur_node = 0; cur_node < nodes.size(); cur_node++) {
-      printf("send prepare to %s\n", nodes[cur_node].c_str());
+      //tprintf("y:send prepare to %s\n", nodes[cur_node].c_str());
       paxos_protocol::prepareres cur_res;
 
-
+/*
       rpcret = handle(nodes[cur_node]).safebind()->call(paxos_protocol::preparereq,
           me, new_proposal, cur_res, rpcc::to(1000));
-
+          */
+      rpcc *rc = handle(nodes[cur_node]).safebind();
+      if(!rc)
+          continue;
+      rpcret = 
+       rc->call(paxos_protocol::preparereq, me, new_proposal, cur_res, rpcc::to(1000));
 
       if(rpcret == paxos_protocol::OK) {
           if(first) {
@@ -192,7 +197,7 @@ proposer::prepare(unsigned instance, std::vector<std::string> &accepts,
       }
   }
 
-
+  //tprintf("y:prepare return %d\n", ret);
   return ret;
 }
 
@@ -213,9 +218,13 @@ proposer::accept(unsigned instance, std::vector<std::string> &accepts,
   paxos_protocol::status ret;
 
   for(cur_node = 0; cur_node < nodes.size(); cur_node++) {
-      ret = 
-        handle(nodes[cur_node]).safebind()->call(paxos_protocol::acceptreq,
-                                                 me, a, r, rpcc::to(1000));
+      //tprintf("y:send accept to %s\n", nodes[cur_node].c_str());
+      rpcc *rc = handle(nodes[cur_node]).safebind();
+      if(rc == NULL)
+          continue;
+
+      ret = rc->call(paxos_protocol::acceptreq, me, a, r, rpcc::to(1000));
+
       if(ret == paxos_protocol::OK) 
           accepts.push_back(nodes[cur_node]);
   }
@@ -234,9 +243,13 @@ proposer::decide(unsigned instance, std::vector<std::string> accepts,
   new_decide.v = v;
   int r;
 
-  for(cur_node = 0; cur_node < accepts.size(); cur_node++) 
-    handle(accepts[cur_node]).safebind()->call(paxos_protocol::decidereq,
-                                       me, new_decide, r, rpcc::to(1000));
+  for(cur_node = 0; cur_node < accepts.size(); cur_node++) {
+    rpcc *rc = handle(accepts[cur_node]).safebind();
+    if(rc == NULL)
+        continue;
+
+    rc->call(paxos_protocol::decidereq, me, new_decide, r, rpcc::to(1000));
+  }
     
 }
 
