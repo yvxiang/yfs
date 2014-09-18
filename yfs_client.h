@@ -8,7 +8,7 @@
 
 #include "lock_protocol.h"
 #include "lock_client.h"
-#include "lock_client_cache.h"
+#include "lock_client_cache_rsm.h"
 
 class yfs_client {
   extent_client *ec;
