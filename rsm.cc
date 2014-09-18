@@ -78,6 +78,9 @@
 // The rule is that a module releases its internal locks before it
 // upcalls, but can keep its locks when calling down.
 
+#include <unistd.h>
+#include <sys/types.h>
+
 #include <fstream>
 #include <iostream>
 
@@ -278,11 +281,12 @@ rsm::join(std::string m) {
   VERIFY(pthread_mutex_unlock(&rsm_mutex)==0);
   rpcc *cl = h.safebind();
   if (cl != 0) {
+    tprintf("y:we are going to call jionreq\n");
     ret = cl->call(rsm_protocol::joinreq, cfg->myaddr(), last_myvs, 
 		   r, rpcc::to(120000));
   }
   VERIFY(pthread_mutex_lock(&rsm_mutex)==0);
-
+  tprintf("y:joinreq returns, the value is %d\n", ret); 
   if (cl == 0 || ret != rsm_protocol::OK) {
     tprintf("rsm::join: couldn't reach %s %p %d\n", m.c_str(), 
 	   cl, ret);

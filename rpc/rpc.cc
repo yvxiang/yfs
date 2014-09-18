@@ -64,6 +64,7 @@
 #include "method_thread.h"
 #include "slock.h"
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
@@ -556,6 +557,7 @@ rpcs::dispatch(djob_t *j)
 			// if we don't know about this clt_nonce, create a cleanup object
 			if(reply_window_.find(h.clt_nonce) == reply_window_.end()){
 				VERIFY (reply_window_[h.clt_nonce].size() == 0); // create
+                max_rep_xid[h.clt_nonce] = 0;
 				jsl_log(JSL_DBG_2,
 						"rpcs::dispatch: new client %u xid %d chan %d, total clients %d\n", 
 						h.clt_nonce, h.xid, c->channo(), (int)reply_window_.size());
@@ -660,10 +662,38 @@ rpcs::rpcstate_t
 rpcs::checkduplicate_and_update(unsigned int clt_nonce, unsigned int xid,
 		unsigned int xid_rep, char **b, int *sz)
 {
+    std::map<unsigned int, std::list<reply_t> >::iterator clt;
+    std::list<reply_t>::iterator it;
 	ScopedLock rwl(&reply_window_m_);
-
         // You fill this in for Lab 1.
-	return NEW;
+    clt = reply_window_.find(clt_nonce);
+    if(xid_rep > max_rep_xid[clt_nonce])
+        max_rep_xid[clt_nonce] = xid_rep;
+
+    for(it = clt->second.begin(); it != clt->second.end(); it++) {
+        if(it->xid == xid) {
+            if(it->cb_present == true) {
+                *b = it->buf;
+                *sz = it->sz;
+                return DONE;
+            }
+            return INPROGRESS;
+        }
+    }
+    if(xid <= max_rep_xid[clt_nonce]) {
+        return FORGOTTEN;
+    } else {
+        it = clt->second.begin();
+        while(it != clt->second.end()) {
+            if(it->xid <= xid_rep) {
+                free(it->buf);
+                it = clt->second.erase(it);
+            } else it++;
+        }
+        struct reply_t new_reply(xid);
+        clt->second.push_back(new_reply);
+        return NEW;
+    }
 }
 
 // rpcs::dispatch calls add_reply when it is sending a reply to an RPC,
@@ -675,8 +705,19 @@ void
 rpcs::add_reply(unsigned int clt_nonce, unsigned int xid,
 		char *b, int sz)
 {
+    
 	ScopedLock rwl(&reply_window_m_);
         // You fill this in for Lab 1.
+    std::list<reply_t>::iterator it;
+    for(it = reply_window_[clt_nonce].begin();
+            it != reply_window_[clt_nonce].end(); it++) {
+        if(it->xid == xid) {
+            it->buf = b;
+            it->sz = sz;
+            it->cb_present = true;
+            return ;
+        }
+    }
 }
 
 void
@@ -691,8 +732,9 @@ rpcs::free_reply_window(void)
 			free((*it).buf);
 		}
 		clt->second.clear();
-	}
+    }	
 	reply_window_.clear();
+    max_rep_xid.clear();
 }
 
 // rpc handler

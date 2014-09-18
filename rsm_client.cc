@@ -1,3 +1,5 @@
+#include <unistd.h>
+#include <sys/types.h>
 #include "rsm_client.h"
 #include <vector>
 #include <arpa/inet.h>

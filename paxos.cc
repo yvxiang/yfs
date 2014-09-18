@@ -153,7 +153,52 @@ proposer::prepare(unsigned instance, std::vector<std::string> &accepts,
   // You fill this in for Lab 6
   // Note: if got an "oldinstance" reply, commit the instance using
   // acc->commit(...), and return false.
-  return false;
+  //
+  size_t cur_node;
+  paxos_protocol::preparearg new_proposal;
+  new_proposal.instance = instance;
+  new_proposal.n = my_n;
+  paxos_protocol::status rpcret;
+  prop_t max_n_a;
+  bool first = true;
+  bool ret = true;
+
+
+  for(cur_node = 0; cur_node < nodes.size(); cur_node++) {
+      //tprintf("y:send prepare to %s\n", nodes[cur_node].c_str());
+      paxos_protocol::prepareres cur_res;
+
+/*
+      rpcret = handle(nodes[cur_node]).safebind()->call(paxos_protocol::preparereq,
+          me, new_proposal, cur_res, rpcc::to(1000));
+          */
+      rpcc *rc = handle(nodes[cur_node]).safebind();
+      if(!rc)
+          continue;
+      rpcret = 
+       rc->call(paxos_protocol::preparereq, me, new_proposal, cur_res, rpcc::to(1000));
+
+      if(rpcret == paxos_protocol::OK) {
+          if(first) {
+              max_n_a = cur_res.n_a;
+              first = false;
+          }
+
+          if(cur_res.oldinstance == true) {
+              acc->commit(instance, cur_res.v_a);
+              ret = false;
+          } else {
+              if(cur_res.accept == true) {
+                  accepts.push_back(nodes[cur_node]);
+                  if(cur_res.n_a >= max_n_a)
+                      v = cur_res.v_a;
+              }
+          }
+      }
+  }
+
+  //tprintf("y:prepare return %d\n", ret);
+  return ret;
 }
 
 // run() calls this to send out accept RPCs to accepts.
@@ -163,6 +208,27 @@ proposer::accept(unsigned instance, std::vector<std::string> &accepts,
         std::vector<std::string> nodes, std::string v)
 {
   // You fill this in for Lab 6
+//  ScopedLock ml(&pxs_mutex);
+  size_t cur_node;
+  paxos_protocol::acceptarg a;
+  a.instance = instance;
+  a.n = my_n;
+  a.v = v;
+  bool r;
+  paxos_protocol::status ret;
+
+  for(cur_node = 0; cur_node < nodes.size(); cur_node++) {
+      //tprintf("y:send accept to %s\n", nodes[cur_node].c_str());
+      rpcc *rc = handle(nodes[cur_node]).safebind();
+      if(rc == NULL)
+          continue;
+
+      ret = rc->call(paxos_protocol::acceptreq, me, a, r, rpcc::to(1000));
+
+      if(ret == paxos_protocol::OK) 
+          accepts.push_back(nodes[cur_node]);
+  }
+  
 }
 
 void
@@ -170,6 +236,21 @@ proposer::decide(unsigned instance, std::vector<std::string> accepts,
 	      std::string v)
 {
   // You fill this in for Lab 6
+//  ScopedLock ml(&pxs_mutex);
+  size_t cur_node;
+  paxos_protocol::decidearg new_decide;
+  new_decide.instance = instance;
+  new_decide.v = v;
+  int r;
+
+  for(cur_node = 0; cur_node < accepts.size(); cur_node++) {
+    rpcc *rc = handle(accepts[cur_node]).safebind();
+    if(rc == NULL)
+        continue;
+
+    rc->call(paxos_protocol::decidereq, me, new_decide, r, rpcc::to(1000));
+  }
+    
 }
 
 acceptor::acceptor(class paxos_change *_cfg, bool _first, std::string _me, 
@@ -205,6 +286,22 @@ acceptor::preparereq(std::string src, paxos_protocol::preparearg a,
   // You fill this in for Lab 6
   // Remember to initialize *BOTH* r.accept and r.oldinstance appropriately.
   // Remember to *log* the proposal if the proposal is accepted.
+//  ScopedLock ml(&pxs_mutex);
+  if(a.instance <= instance_h) {
+      r.oldinstance = true;
+      r.v_a = values[a.instance];
+  } else if(a.n > n_h) {
+      r.oldinstance = false;
+      r.accept = true;
+      n_h = a.n;
+      r.n_a = n_a;
+      r.v_a = v_a;
+      l->logprop(n_h);
+  } else {
+      r.oldinstance = false;
+      r.accept = false;
+  }
+
   return paxos_protocol::OK;
 
 }
@@ -215,8 +312,18 @@ acceptor::acceptreq(std::string src, paxos_protocol::acceptarg a, bool &r)
 {
   // You fill this in for Lab 6
   // Remember to *log* the accept if the proposal is accepted.
+//  ScopedLock ml(&pxs_mutex);
+  paxos_protocol::status ret;
 
-  return paxos_protocol::OK;
+  if(a.n >= n_h) {
+      n_a = a.n;
+      v_a = a.v;
+      l->logaccept(n_a, v_a);
+      ret = paxos_protocol::OK;
+  } else 
+      ret = paxos_protocol::ERR;
+
+  return ret;
 }
 
 // the src argument is only for debug purpose
