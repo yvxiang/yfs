@@ -102,12 +102,11 @@ lock_client_cache_rsm::acquire(lock_protocol::lockid_t lid)
           it->second.retry = false;
           it->second.xid = xid;
           xid++;
-          lock_protocol::xid_t cur_xid = it->second.xid;
 
           pthread_mutex_unlock(&lock_stat_map_lock);
           int r;
           lock_protocol::status  rpcret = cl->call(lock_protocol::acquire,
-                                            lid, id, cur_xid, r); 
+                                            lid, id, it->second.xid, r); 
 
           pthread_mutex_lock(&lock_stat_map_lock);
 
@@ -155,7 +154,6 @@ lock_client_cache_rsm::release(lock_protocol::lockid_t lid)
 
           if(lu)
               lu->dorelease(lid);
-
           //tprintf("%s:%u try to release %llu\n", id.c_str(), pthread_self(), lid);
           int r;
           cl->call(lock_protocol::release, lid, id, xid, r);
@@ -221,18 +219,17 @@ lock_client_cache_rsm::retry_handler(lock_protocol::lockid_t lid,
   //tprintf("%s receive retry lock %llu from server\n", id.c_str(), lid);
   it = lock_stat_map.find(lid);
   if(it == lock_stat_map.end()) {
-      //tprintf("ERROR try to retry a lock that hasn't acquire");
+      tprintf("ERROR try to retry a lock that hasn't acquire");
   } else {
       if(it->second.xid == xid) {
           it->second.retry = true;
           pthread_cond_broadcast(&acquire_wait_cond);
       } else {
-          //tprintf("ERROR try to retry with a wrong xid\n");
+          tprintf("ERROR try to retry with a wrong xid\n");
       }
   }
 
   pthread_mutex_unlock(&lock_stat_map_lock);
   return ret;
 }
-
 

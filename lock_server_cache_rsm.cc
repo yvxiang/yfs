@@ -113,7 +113,7 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
           it->second.holder = id;
           it->second.revoke = false;
           it->second.waiter.erase(id);
-
+          
           if(!it->second.waiter.empty()) {
               it->second.revoke = true;
               revoke_queue.enq(revoke_entry(id, lid, xid));

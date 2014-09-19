@@ -172,7 +172,7 @@ extent_client::flush(extent_protocol::extentid_t eid)
         if(it->second.dirty)
             cl->call(extent_protocol::put, eid, it->second.content, r);
         printf("flush out:\n");
-        printf("%u\n", eid);
+        printf("%llu\n", eid);
         printf("%s\n", it->second.content.c_str());
         file_cache.erase(it);
         file_attr_cache.erase(eid);
