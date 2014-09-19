@@ -27,6 +27,30 @@ class lock_client_cache_rsm;
 // Clients that caches locks.  The server can revoke locks using 
 // lock_revoke_server.
 class lock_client_cache_rsm : public lock_client {
+
+ typedef enum {
+     NONE,
+     FREE,
+     LOCKED,
+     ACQUIRING,
+     RELEASING
+ }LOCK_STAT;
+
+ struct lock_stat {
+     LOCK_STAT ls;
+     bool revoke;
+     bool retry;
+     lock_protocol::xid_t xid;
+     lock_stat() : ls(NONE), revoke(false), retry(false), xid(0) {}
+ };
+ struct release_entry {
+     lock_protocol::lockid_t lid;
+     lock_protocol::xid_t xid;
+     release_entry(lock_protocol::lockid_t l_id = 0,
+                                lock_protocol::xid_t x_id = 0)
+                                    : lid(l_id), xid(x_id) {}
+ };
+
  private:
   rsm_client *rsmc;
   class lock_release_user *lu;
@@ -34,6 +58,10 @@ class lock_client_cache_rsm : public lock_client {
   std::string hostname;
   std::string id;
   lock_protocol::xid_t xid;
+  std::map<lock_protocol::lockid_t, lock_stat> lock_stat_map;
+  pthread_cond_t acquire_wait_cond;
+  pthread_mutex_t lock_stat_map_lock;
+  fifo<release_entry> release_queue;
  public:
   static int last_port;
   lock_client_cache_rsm(std::string xdst, class lock_release_user *l = 0);
