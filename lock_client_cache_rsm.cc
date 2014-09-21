@@ -46,6 +46,8 @@ lock_client_cache_rsm::lock_client_cache_rsm(std::string xdst,
 
   pthread_cond_init(&acquire_wait_cond, NULL);
   pthread_mutex_init(&lock_stat_map_lock, NULL);
+
+  rsmc = new rsm_client(xdst);
 }
 
 
@@ -64,7 +66,7 @@ lock_client_cache_rsm::releaser()
         if(lu)
             lu->dorelease(lock_to_release.lid);
         int r;
-        cl->call(lock_protocol::release, lock_to_release.lid, id,
+        rsmc->call(lock_protocol::release, lock_to_release.lid, id,
             xid, r);
 
         pthread_mutex_lock(&lock_stat_map_lock);
@@ -105,7 +107,7 @@ lock_client_cache_rsm::acquire(lock_protocol::lockid_t lid)
 
           pthread_mutex_unlock(&lock_stat_map_lock);
           int r;
-          lock_protocol::status  rpcret = cl->call(lock_protocol::acquire,
+          lock_protocol::status  rpcret = rsmc->call(lock_protocol::acquire,
                                             lid, id, it->second.xid, r); 
 
           pthread_mutex_lock(&lock_stat_map_lock);
@@ -156,7 +158,7 @@ lock_client_cache_rsm::release(lock_protocol::lockid_t lid)
               lu->dorelease(lid);
           //tprintf("%s:%u try to release %llu\n", id.c_str(), pthread_self(), lid);
           int r;
-          cl->call(lock_protocol::release, lid, id, xid, r);
+          rsmc->call(lock_protocol::release, lid, id, xid, r);
 
           pthread_mutex_lock(&lock_stat_map_lock);
           it->second.ls = NONE;

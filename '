@@ -351,54 +351,31 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
 {
   int ret = rsm_client_protocol::OK;
   // You fill this in for Lab 7
-
- // pthread_mutex_lock(&rsm_mutex);
- // printf("y:got rsm_mutex\n");
-
   if(inviewchange) {
-      printf("rsm is in viewchange\n");
       ret = rsm_client_protocol::BUSY;
   } else if(!amiprimary()) {
       ret = rsm_client_protocol::NOTPRIMARY;
   } else {
-      viewstamp cur_stamp = myvs;
-   //   myvs.seqno++;
+      myvs.seqno++;
       std::vector<std::string> clients = cfg->get_view(vid_commit);
       size_t cur_client;
-      printf("send to %d clients\n", clients.size());
-
-  //    pthread_mutex_unlock(&rsm_mutex);
-      pthread_mutex_lock(&invoke_mutex);
-
-      for(cur_client = 1; cur_client < clients.size(); cur_client++) {
+      for(cur_client = 0; cur_client < clients.size(); cur_client++) {
           rpcc *cl = handle(clients[cur_client]).safebind();
           if(cl) {
               int dummy;
               rsm_protocol::status rpcret;
-              rpcret = cl->call(rsm_protocol::invoke, procno, cur_stamp,
-                                            req, dummy, rpcc::to(1000));
-
-              printf("receive %d from %s\n", rpcret, clients[cur_client].c_str());
+              rpcret = cl->call(rsm_protocol::invoke, procno, myvs,
+                                            req, r, rpcc::to(1000));
               if(rpcret != rsm_protocol::OK) {
-                  printf("rpcret is not rsm_protocol::OK\n");
                   ret = rsm_client_protocol::BUSY;
               }
           }
       }
       if(ret == rsm_client_protocol::OK) {
-          printf("y:slaves execute OK, now the primary\n");
           execute(procno, req, r);
-          last_myvs = cur_stamp;
-          myvs.seqno++;
-      }
 
-      pthread_mutex_unlock(&invoke_mutex);
-  //    pthread_mutex_lock(&rsm_mutex);
   }
 
-//  pthread_mutex_unlock(&rsm_mutex);
- // printf("y:release rsm_mutex\n");
-  printf("y:client_invoke return %d\n", ret);
   return ret;
 }
 
@@ -414,19 +391,6 @@ rsm::invoke(int proc, viewstamp vs, std::string req, int &dummy)
 {
   rsm_protocol::status ret = rsm_protocol::OK;
   // You fill this in for Lab 7
-  if(inviewchange || !(vs.vid == myvs.vid && vs.seqno == myvs.seqno)) {
-      tprintf("wrong viewstamp or inviewchange in rsm::invoke\n");
-      tprintf("%llu %llu %llu %llu\n", vs.vid, vs.seqno, myvs.vid, myvs.seqno);
-      ret = rsm_protocol::ERR;
-  } else {
-      tprintf("right %llu %llu %llu %llu\n", vs.vid, vs.seqno, myvs.vid, myvs.seqno);
-      std::string r;
-      execute(proc, req, r);
-      last_myvs = vs;
-      myvs.seqno++;
-      ret = rsm_protocol::OK;
-  }
-  printf("y:rsm::invoke returns %d\n", ret);
   return ret;
 }
 
