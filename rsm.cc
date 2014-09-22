@@ -176,8 +176,10 @@ rsm::recovery()
 
     // If there was a commited viewchange during the synchronization, restart
     // the recovery
-    if (vid_insync != vid_commit)
+    if (vid_insync != vid_commit) {
+      tprintf("y:unable to change inviewchange\n");
       continue;
+    }
 
     if (r) { 
       myvs.vid = vid_commit;
@@ -211,8 +213,17 @@ rsm::sync_with_backups()
   // Wait until
   //   - all backups in view vid_insync are synchronized
   //   - or there is a committed viewchange
+  backups = cfg->get_view(vid_commit);
+  std::vector<std::string>::iterator it;
+  for(it = backups.begin(); it != backups.end(); it++) {
+      if(*it == primary) {
+          backups.erase(it);
+          break;
+      }
+  }
   pthread_cond_wait(&recovery_cond, &rsm_mutex);
   insync = false;
+  tprintf("y:sync_with_backups returns\n");
   return true;
 }
 
@@ -226,16 +237,19 @@ rsm::sync_with_primary()
   // Keep synchronizing with primary until the synchronization succeeds,
   // or there is a commited viewchange
   bool ret = false;
-/*
+
+  /*
   do {
     ret = statetransfer(m);
   } while(!ret && !inviewchange);
+  */
+  ret = statetransfer(m);
 
   if(ret)
-      statetransferdone(m);
+      ret = statetransferdone(m);
 
-      */
-  return true;
+  tprintf("y:sync_with_primary return %d\n", ret == true);
+  return ret;
 }
 
 
@@ -277,7 +291,7 @@ bool
 rsm::statetransferdone(std::string m) {
   // You fill this in for Lab 7
   // - Inform primary that this slave has synchronized for vid_insync
-  /*
+  
   rsm_protocol::status ret = rsm_protocol::ERR;
   rpcc *cl = handle(m).safebind();
   if(cl) {
@@ -285,10 +299,11 @@ rsm::statetransferdone(std::string m) {
       ret = cl->call(rsm_protocol::transferdonereq, cfg->myaddr(),
                                             vid_insync, r, rpcc::to(1000));
   }
-  */
+  
 
-  //return ret == rsm_protocol::OK;
-  return true;
+  tprintf("statetransferdone return %d\n");
+  return ret == rsm_protocol::OK;
+ // return true;
 }
 
 
@@ -375,7 +390,7 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
   // You fill this in for Lab 7
 
     pthread_mutex_lock(&invoke_mutex);
-    //pthread_mutex_lock(&rsm_mutex);
+    pthread_mutex_lock(&rsm_mutex);
  // printf("y:got rsm_mutex\n");
 
   if(inviewchange) {
@@ -390,7 +405,7 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
       size_t cur_client;
       printf("send to %d clients\n", clients.size());
 
-     // pthread_mutex_unlock(&rsm_mutex);
+      pthread_mutex_unlock(&rsm_mutex);
 
       for(cur_client = 1; cur_client < clients.size(); cur_client++) {
           rpcc *cl = handle(clients[cur_client]).safebind();
@@ -414,10 +429,10 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
           myvs.seqno++;
       }
 
- //       pthread_mutex_lock(&rsm_mutex);
+      pthread_mutex_lock(&rsm_mutex);
   }
 
-//  pthread_mutex_unlock(&rsm_mutex);
+  pthread_mutex_unlock(&rsm_mutex);
   pthread_mutex_unlock(&invoke_mutex);
   printf("y:release rsm_mutex\n");
   printf("y:client_invoke return %d\n", ret);
@@ -488,13 +503,20 @@ rsm::transferdonereq(std::string m, unsigned vid, int &)
   //   for the same view with me
   // - Remove the slave from the list of unsynchronized backups
   // - Wake up recovery thread if all backups are synchronized
-  /*
+  
   if(!insync || vid != vid_insync) {
-      return rsm_protocol::BUSY;
+      ret = rsm_protocol::BUSY;
   } else {
       std::vector<std::string>::iterator it;
+      /*
+      printf("cur backups\n");
+      int i;
+      for(i = 0; i < backups.size(); i++)
+          printf("%s\n", backups[i].c_str());
+      */
       for(it = backups.begin(); it != backups.end(); it++) {
           if(*it == m) {
+              tprintf("y:remove %s\n", m.c_str());
               backups.erase(it);
               flag = true;
               break;
@@ -510,7 +532,7 @@ rsm::transferdonereq(std::string m, unsigned vid, int &)
           insync = false;
       }
   }
-*/
+
   return ret;
 }
 
