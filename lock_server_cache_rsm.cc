@@ -8,6 +8,7 @@
 #include "lang/verify.h"
 #include "handle.h"
 #include "tprintf.h"
+#include <algorithm>
 
 
 static void *
@@ -104,7 +105,7 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
           xid_it->second = xid;
           if(it->second.holded) {
               ret = lock_protocol::RETRY;
-              it->second.waiter.insert(id);
+              it->second.waiter.push_back(id);
               if(!it->second.revoke) {
                   it->second.revoke = true;
                   revoke_queue.enq(revoke_entry(it->second.holder, lid,
@@ -115,7 +116,10 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
               it->second.holded = true;
               it->second.holder = id;
               it->second.revoke = false;
-              it->second.waiter.erase(id);
+              std::vector<std::string>::iterator waiter_it = std::find(
+                                            it->second.waiter.begin(),
+                                            it->second.waiter.end(), id);
+              it->second.waiter.erase(waiter_it);
 
               if(!it->second.waiter.empty()) {
                   it->second.revoke = true;
@@ -195,6 +199,58 @@ lock_server_cache_rsm::marshal_state()
 {
   std::ostringstream ost;
   std::string r;
+
+  marshall rep;
+  int lock_stat_map_size = lock_stat_map.size();
+  rep << lock_stat_map_size;
+  std::map<lock_protocol::lockid_t, lock_stat>::iterator it;
+
+  for(it = lock_stat_map.begin(); it != lock_stat_map.end(); it++) {
+
+      lock_protocol::lockid_t lid = it->first;
+      rep << lid;
+
+      lock_stat &cur_lock = it->second;
+      rep << cur_lock.holded;
+      rep << cur_lock.revoke;
+      rep << cur_lock.holder;
+      rep << cur_lock.waiter;
+
+      int highest_xid_from_client_size = cur_lock.highest_xid_from_client.size();
+      rep << highest_xid_from_client_size;
+      client_xid_map::iterator highest_xid_it;
+
+      for(highest_xid_it = cur_lock.highest_xid_from_client.begin();
+            highest_xid_it != cur_lock.highest_xid_from_client.end();
+                                                highest_xid_it++) {
+          rep << highest_xid_it->first;
+          rep << highest_xid_it->second;
+      }
+
+      int highest_xid_acquire_reply_size = cur_lock.highest_xid_acquire_reply.size();
+      rep << highest_xid_acquire_reply_size;
+      client_reply_map::iterator highest_acquire_it;
+
+      for(highest_acquire_it = cur_lock.highest_xid_acquire_reply.begin();
+            highest_acquire_it != cur_lock.highest_xid_acquire_reply.end();
+                    highest_acquire_it++) {
+          rep << highest_acquire_it->first;
+          rep << highest_acquire_it->second;
+      }
+
+      int highest_xid_release_reply_size = cur_lock.highest_xid_release_reply.size();
+      rep << highest_xid_release_reply_size;
+      client_reply_map::iterator highest_release_it;
+
+      for(highest_release_it = cur_lock.highest_xid_release_reply.begin();
+            highest_release_it != cur_lock.highest_xid_release_reply.end();
+                    highest_release_it++) {
+          rep << highest_release_it->first;
+          rep << highest_release_it->second;
+      }
+
+  }
+  r = rep.str();
   return r;
 }
 
