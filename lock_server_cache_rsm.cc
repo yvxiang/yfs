@@ -37,6 +37,7 @@ lock_server_cache_rsm::lock_server_cache_rsm(class rsm *_rsm)
   VERIFY (r == 0);
 
   pthread_mutex_init(&lock_stat_map_lock, NULL);
+  rsm->set_state_transfer(this);
 }
 
 void
@@ -105,7 +106,8 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
           xid_it->second = xid;
           if(it->second.holded) {
               ret = lock_protocol::RETRY;
-              it->second.waiter.push_back(id);
+              it->second.waiter.insert(id);
+
               if(!it->second.revoke) {
                   it->second.revoke = true;
                   revoke_queue.enq(revoke_entry(it->second.holder, lid,
@@ -116,10 +118,7 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
               it->second.holded = true;
               it->second.holder = id;
               it->second.revoke = false;
-              std::vector<std::string>::iterator waiter_it = std::find(
-                                            it->second.waiter.begin(),
-                                            it->second.waiter.end(), id);
-              it->second.waiter.erase(waiter_it);
+              it->second.waiter.erase(id);        
 
               if(!it->second.waiter.empty()) {
                   it->second.revoke = true;
@@ -200,8 +199,10 @@ lock_server_cache_rsm::marshal_state()
   std::ostringstream ost;
   std::string r;
 
+  pthread_mutex_lock(&lock_stat_map_lock);
+
   marshall rep;
-  int lock_stat_map_size = lock_stat_map.size();
+  unsigned int lock_stat_map_size = lock_stat_map.size();
   rep << lock_stat_map_size;
   std::map<lock_protocol::lockid_t, lock_stat>::iterator it;
 
@@ -214,9 +215,18 @@ lock_server_cache_rsm::marshal_state()
       rep << cur_lock.holded;
       rep << cur_lock.revoke;
       rep << cur_lock.holder;
-      rep << cur_lock.waiter;
+  //    rep << cur_lock.waiter;
+      unsigned int waiter_size = cur_lock.waiter.size();
+      rep << waiter_size;
+      std::set<std::string>::iterator waiter_it;
 
-      int highest_xid_from_client_size = cur_lock.highest_xid_from_client.size();
+      for(waiter_it = cur_lock.waiter.begin();
+                    waiter_it != cur_lock.waiter.end();
+                            waiter_it++)
+          rep << *waiter_it;
+
+      unsigned int highest_xid_from_client_size = 
+                cur_lock.highest_xid_from_client.size();
       rep << highest_xid_from_client_size;
       client_xid_map::iterator highest_xid_it;
 
@@ -227,7 +237,8 @@ lock_server_cache_rsm::marshal_state()
           rep << highest_xid_it->second;
       }
 
-      int highest_xid_acquire_reply_size = cur_lock.highest_xid_acquire_reply.size();
+      unsigned int highest_xid_acquire_reply_size = 
+                    cur_lock.highest_xid_acquire_reply.size();
       rep << highest_xid_acquire_reply_size;
       client_reply_map::iterator highest_acquire_it;
 
@@ -238,7 +249,8 @@ lock_server_cache_rsm::marshal_state()
           rep << highest_acquire_it->second;
       }
 
-      int highest_xid_release_reply_size = cur_lock.highest_xid_release_reply.size();
+      unsigned int highest_xid_release_reply_size =
+                    cur_lock.highest_xid_release_reply.size();
       rep << highest_xid_release_reply_size;
       client_reply_map::iterator highest_release_it;
 
@@ -251,12 +263,75 @@ lock_server_cache_rsm::marshal_state()
 
   }
   r = rep.str();
+  pthread_mutex_unlock(&lock_stat_map_lock);
+
   return r;
 }
 
 void
 lock_server_cache_rsm::unmarshal_state(std::string state)
 {
+    unmarshall rep(state);
+    unsigned int lock_stat_map_size, cur_lock_index;
+
+    pthread_mutex_lock(&lock_stat_map_lock);
+
+    tprintf("y:about to unmarshal_state\n");
+
+    rep >> lock_stat_map_size;
+    for(cur_lock_index = 0; cur_lock_index < lock_stat_map_size;
+                                            cur_lock_index++) {
+        lock_protocol::lockid_t lid;
+        rep >> lid;
+        lock_stat cur_lock;
+        rep >> cur_lock.holded;
+        rep >> cur_lock.revoke;
+        rep >> cur_lock.holder;
+        tprintf("y:unmarshal here OK\n");
+
+        unsigned int waiter_size;
+        std::string tmp_waiter;
+        rep >> waiter_size;
+        while(waiter_size--) {
+            rep >> tmp_waiter;
+            cur_lock.waiter.insert(tmp_waiter);
+        }
+
+        unsigned int highest_xid_from_client_size;
+        rep >> highest_xid_from_client_size;
+        lock_protocol::xid_t tmp_xid;
+        std::string tmp_id;
+        while(highest_xid_from_client_size--) {
+            rep >> tmp_id;
+            rep >> tmp_xid;
+            cur_lock.highest_xid_from_client.insert
+                                (std::make_pair(tmp_id, tmp_xid));
+        }
+
+        unsigned int highest_xid_acquire_reply_size;
+        rep >> highest_xid_acquire_reply_size;
+        int tmp_acquire_xid;
+        while(highest_xid_acquire_reply_size--) {
+            rep >> tmp_id;
+            rep >> tmp_acquire_xid;
+            cur_lock.highest_xid_acquire_reply.insert
+                                (std::make_pair(tmp_id, tmp_acquire_xid));
+        }
+
+        unsigned int highest_xid_release_reply_size;
+        rep >> highest_xid_release_reply_size;
+        int tmp_release_xid;
+        while(highest_xid_release_reply_size--) {
+            rep >> tmp_id;
+            rep >> tmp_release_xid;
+            cur_lock.highest_xid_release_reply.insert
+                                (std::make_pair(tmp_id, tmp_release_xid));
+        }
+
+        lock_stat_map.insert(std::make_pair(lid, cur_lock));
+    }
+
+    pthread_mutex_unlock(&lock_stat_map_lock);
 }
 
 lock_protocol::status

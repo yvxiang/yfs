@@ -211,6 +211,7 @@ rsm::sync_with_backups()
   // Wait until
   //   - all backups in view vid_insync are synchronized
   //   - or there is a committed viewchange
+  pthread_cond_wait(&recovery_cond, &rsm_mutex);
   insync = false;
   return true;
 }
@@ -224,6 +225,16 @@ rsm::sync_with_primary()
   // You fill this in for Lab 7
   // Keep synchronizing with primary until the synchronization succeeds,
   // or there is a commited viewchange
+  bool ret = false;
+/*
+  do {
+    ret = statetransfer(m);
+  } while(!ret && !inviewchange);
+
+  if(ret)
+      statetransferdone(m);
+
+      */
   return true;
 }
 
@@ -266,6 +277,17 @@ bool
 rsm::statetransferdone(std::string m) {
   // You fill this in for Lab 7
   // - Inform primary that this slave has synchronized for vid_insync
+  /*
+  rsm_protocol::status ret = rsm_protocol::ERR;
+  rpcc *cl = handle(m).safebind();
+  if(cl) {
+      int r;
+      ret = cl->call(rsm_protocol::transferdonereq, cfg->myaddr(),
+                                            vid_insync, r, rpcc::to(1000));
+  }
+  */
+
+  //return ret == rsm_protocol::OK;
   return true;
 }
 
@@ -459,12 +481,36 @@ rsm_protocol::status
 rsm::transferdonereq(std::string m, unsigned vid, int &)
 {
   int ret = rsm_protocol::OK;
+  bool flag = false;
   ScopedLock ml(&rsm_mutex);
   // You fill this in for Lab 7
   // - Return BUSY if I am not insync, or if the slave is not synchronizing
   //   for the same view with me
   // - Remove the slave from the list of unsynchronized backups
   // - Wake up recovery thread if all backups are synchronized
+  /*
+  if(!insync || vid != vid_insync) {
+      return rsm_protocol::BUSY;
+  } else {
+      std::vector<std::string>::iterator it;
+      for(it = backups.begin(); it != backups.end(); it++) {
+          if(*it == m) {
+              backups.erase(it);
+              flag = true;
+              break;
+          }
+      }
+      if(!flag) {
+          //something goes wrong
+          tprintf("y:already sync???\n");
+          ret = rsm_protocol::ERR;
+      } else if(backups.empty()) {
+          //wake up recovery thread
+          pthread_cond_signal(&recovery_cond);
+          insync = false;
+      }
+  }
+*/
   return ret;
 }
 

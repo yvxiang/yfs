@@ -19,7 +19,7 @@ class lock_server_cache_rsm : public rsm_state_transfer {
      bool holded;
      bool revoke;
      std::string holder;
-     std::vector<std::string> waiter;
+     std::set<std::string> waiter;
      client_xid_map highest_xid_from_client;
      client_reply_map highest_xid_acquire_reply;
      client_reply_map highest_xid_release_reply;

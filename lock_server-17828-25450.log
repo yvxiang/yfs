@@ -1,0 +1,152 @@
+./lock_server 17828 25450
+logread
+1411401046560:	heartbeater: go to sleep
+1411401046560:	get_view(0): returns 
+1411401046560:	rsm::join: 17828 mylast (0,0)
+1411401046560:	handler_mgr::get_handle trying to bind...17828
+1411401046561:	handle_mgr::get_handle bind succeeded 17828
+1411401046561:	y:we are going to call jionreq
+1411401046563:	y:joinreq returns, the value is 0
+1411401046563:	rsm::join: succeeded done 1 17828
+propseen 1 17828
+accepted 1 17828 17828 25450 
+done 2 17828 25450 
+
+restore: done 1 17828
+propseen 1 17828
+accepted 1 17828 17828 25450 
+done 2 17828 25450 
+
+logread
+logread: instance: 1 w. v = 17828
+logread: high update: 1(17828)
+logread: prop update 1(17828) with v = 17828 25450 
+logread: instance: 2 w. v = 17828 25450 
+1411401046563:	get_view(2): returns 17828 25450 
+1411401046563:	config::reconstruct: 2 17828,25450
+1411401046563:	recovery: joined
+1411401046563:	commit_change: new view (2)  last vs (0,0) 17828 insync 0
+1411401046563:	get_view(2): returns 17828 25450 
+1411401046563:	get_view(1): returns 17828
+1411401046563:	set_primary: primary stays 17828
+1411401046563:	get_view(2): returns 17828 25450 
+1411401046563:	get_view(2): returns 17828 25450 
+1411401046563:	recovery: sync vid_insync 2
+1411401046563:	recovery: sync done
+1411401046563:	recovery: go to sleep 0 0
+1411401047574:	decidereq for accepted instance 3 (my instance 2) v=17828 25450 37581 
+1411401047574:	acceptor::commit: instance=3 has v= 17828 25450 37581 
+1411401047574:	commit: highestaccepteinstance = 3
+1411401047574:	config::paxos_commit: 3: 17828,25450,37581
+1411401047574:	config::paxos_commit: is 17828 still a member?
+1411401047574:	config::paxos_commit: is 25450 still a member?
+1411401047574:	commit_change: new view (3)  last vs (0,0) 17828 insync 0
+1411401047574:	get_view(3): returns 17828 25450 37581 
+1411401047574:	get_view(2): returns 17828 25450 
+1411401047574:	set_primary: primary stays 17828
+1411401047574:	get_view(3): returns 17828 25450 37581 
+1411401047574:	get_view(3): returns 17828 25450 37581 
+1411401047574:	recovery: sync vid_insync 3
+1411401047574:	recovery: sync done
+1411401047574:	recovery: go to sleep 0 0
+1411401048000:	heartbeat from 17828(3) myvid 3
+1411401049000:	get_view(3): returns 17828 25450 37581 
+1411401049000:	heartbeater: current membership 17828,25450,37581
+1411401049000:	doheartbeater to 17828 (3)
+1411401049000:	doheartbeat done 0
+1411401049000:	heartbeater: go to sleep
+1411401051000:	heartbeat from 17828(3) myvid 3
+1411401052000:	get_view(3): returns 17828 25450 37581 
+1411401052000:	heartbeater: current membership 17828,25450,37581
+1411401052000:	doheartbeater to 17828 (3)
+1411401052000:	doheartbeat done 0
+1411401052000:	heartbeater: go to sleep
+1411401054047:	heartbeat from 17828(3) myvid 3
+1411401055000:	get_view(3): returns 17828 25450 37581 
+1411401055000:	heartbeater: current membership 17828,25450,37581
+1411401055000:	doheartbeater to 17828 (3)
+1411401055000:	doheartbeat done 0
+1411401055000:	heartbeater: go to sleep
+1411401056053:	decidereq for accepted instance 4 (my instance 3) v=17828 25450 
+1411401056053:	acceptor::commit: instance=4 has v= 17828 25450 
+1411401056053:	commit: highestaccepteinstance = 4
+1411401056053:	config::paxos_commit: 4: 17828,25450
+1411401056053:	config::paxos_commit: is 17828 still a member?
+1411401056053:	config::paxos_commit: is 25450 still a member?
+1411401056053:	config::paxos_commit: is 37581 still a member?
+1411401056053:	config::paxos_commit: delete 37581
+1411401056053:	handle_mgr::delete_handle_wo: cl 37581 isn't in cl list
+1411401056053:	commit_change: new view (4)  last vs (0,0) 17828 insync 0
+1411401056053:	get_view(4): returns 17828 25450 
+1411401056053:	get_view(3): returns 17828 25450 37581 
+1411401056053:	set_primary: primary stays 17828
+1411401056053:	get_view(4): returns 17828 25450 
+1411401056053:	get_view(4): returns 17828 25450 
+1411401056053:	recovery: sync vid_insync 4
+1411401056053:	recovery: sync done
+1411401056053:	recovery: go to sleep 0 0
+1411401058000:	get_view(4): returns 17828 25450 
+1411401058000:	heartbeater: current membership 17828,25450
+1411401058000:	doheartbeater to 17828 (4)
+1411401058000:	doheartbeat done 0
+1411401058000:	heartbeater: go to sleep
+1411401059049:	heartbeat from 17828(4) myvid 4
+1411401061000:	get_view(4): returns 17828 25450 
+1411401061000:	heartbeater: current membership 17828,25450
+1411401061000:	doheartbeater to 17828 (4)
+1411401061000:	doheartbeat done 0
+1411401061000:	heartbeater: go to sleep
+1411401062000:	heartbeat from 17828(4) myvid 4
+1411401064000:	get_view(4): returns 17828 25450 
+1411401064000:	heartbeater: current membership 17828,25450
+1411401064000:	doheartbeater to 17828 (4)
+1411401064000:	doheartbeat done 0
+1411401064000:	heartbeater: go to sleep
+1411401065000:	heartbeat from 17828(4) myvid 4
+1411401067000:	get_view(4): returns 17828 25450 
+1411401067000:	heartbeater: current membership 17828,25450
+1411401067000:	doheartbeater to 17828 (4)
+1411401067000:	doheartbeat done 0
+1411401067000:	heartbeater: go to sleep
+1411401068000:	heartbeat from 17828(4) myvid 4
+1411401070000:	get_view(4): returns 17828 25450 
+1411401070000:	heartbeater: current membership 17828,25450
+1411401070000:	doheartbeater to 17828 (4)
+1411401070000:	doheartbeat done 0
+1411401070000:	heartbeater: go to sleep
+1411401071000:	heartbeat from 17828(4) myvid 4
+1411401073000:	get_view(4): returns 17828 25450 
+1411401073000:	heartbeater: current membership 17828,25450
+1411401073000:	doheartbeater to 17828 (4)
+1411401073000:	doheartbeat done 0
+1411401073000:	heartbeater: go to sleep
+1411401074000:	heartbeat from 17828(4) myvid 4
+1411401076000:	get_view(4): returns 17828 25450 
+1411401076000:	heartbeater: current membership 17828,25450
+1411401076000:	doheartbeater to 17828 (4)
+1411401076000:	doheartbeat done 0
+1411401076000:	heartbeater: go to sleep
+1411401077000:	heartbeat from 17828(4) myvid 4
+1411401079000:	get_view(4): returns 17828 25450 
+1411401079000:	heartbeater: current membership 17828,25450
+1411401079000:	doheartbeater to 17828 (4)
+1411401079000:	doheartbeat done 0
+1411401079000:	heartbeater: go to sleep
+1411401080000:	heartbeat from 17828(4) myvid 4
+1411401082000:	get_view(4): returns 17828 25450 
+1411401082000:	heartbeater: current membership 17828,25450
+1411401082000:	doheartbeater to 17828 (4)
+1411401082000:	doheartbeat done 0
+1411401082000:	heartbeater: go to sleep
+1411401083000:	heartbeat from 17828(4) myvid 4
+1411401085000:	get_view(4): returns 17828 25450 
+1411401085000:	heartbeater: current membership 17828,25450
+1411401085000:	doheartbeater to 17828 (4)
+1411401085000:	doheartbeat done 0
+1411401085000:	heartbeater: go to sleep
+1411401086000:	heartbeat from 17828(4) myvid 4
+1411401088000:	get_view(4): returns 17828 25450 
+1411401088000:	heartbeater: current membership 17828,25450
+1411401088000:	doheartbeater to 17828 (4)
+1411401088000:	doheartbeat done 0
+1411401088000:	heartbeater: go to sleep

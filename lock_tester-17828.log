@@ -1,0 +1,71 @@
+./lock_tester 17828
+cache lock client
+create rsm_client
+rsm_client::init_members get members!
+1411401048588:	handler_mgr::get_handle trying to bind...17828
+1411401048588:	handle_mgr::get_handle bind succeeded 17828
+rsm_client::init_members: primary 17828
+rsm_client: done
+create rsm_client
+rsm_client::init_members get members!
+rsm_client::init_members: primary 17828
+rsm_client: done
+create rsm_client
+rsm_client::init_members get members!
+rsm_client::init_members: primary 17828
+rsm_client: done
+create rsm_client
+rsm_client::init_members get members!
+rsm_client::init_members: primary 17828
+rsm_client: done
+create rsm_client
+rsm_client::init_members get members!
+rsm_client::init_members: primary 17828
+rsm_client: done
+create rsm_client
+rsm_client::init_members get members!
+rsm_client::init_members: primary 17828
+rsm_client: done
+acquire a release a acquire a release a
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828
+rsm_client::invoke proc 7001 primary 17828
+rsm_client::invoke proc 7001 primary 17828 ret 3
+rsm is busy 17828

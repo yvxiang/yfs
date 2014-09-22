@@ -1,0 +1,52 @@
+./lock_server 17828 37581
+logread
+1411401047571:	heartbeater: go to sleep
+1411401047571:	get_view(0): returns 
+1411401047571:	rsm::join: 17828 mylast (0,0)
+1411401047571:	handler_mgr::get_handle trying to bind...17828
+1411401047572:	handle_mgr::get_handle bind succeeded 17828
+1411401047572:	y:we are going to call jionreq
+1411401047574:	y:joinreq returns, the value is 0
+1411401047574:	rsm::join: succeeded done 1 17828
+propseen 1 17828
+accepted 1 17828 17828 25450 
+done 2 17828 25450 
+propseen 2 17828
+accepted 2 17828 17828 25450 37581 
+done 3 17828 25450 37581 
+
+restore: done 1 17828
+propseen 1 17828
+accepted 1 17828 17828 25450 
+done 2 17828 25450 
+propseen 2 17828
+accepted 2 17828 17828 25450 37581 
+done 3 17828 25450 37581 
+
+logread
+logread: instance: 1 w. v = 17828
+logread: high update: 1(17828)
+logread: prop update 1(17828) with v = 17828 25450 
+logread: instance: 2 w. v = 17828 25450 
+logread: high update: 2(17828)
+logread: prop update 2(17828) with v = 17828 25450 37581 
+logread: instance: 3 w. v = 17828 25450 37581 
+1411401047574:	get_view(3): returns 17828 25450 37581 
+1411401047574:	config::reconstruct: 3 17828,25450,37581
+1411401047574:	recovery: joined
+1411401047574:	commit_change: new view (3)  last vs (0,0) 17828 insync 0
+1411401047574:	get_view(3): returns 17828 25450 37581 
+1411401047574:	get_view(2): returns 17828 25450 
+1411401047575:	set_primary: primary stays 17828
+1411401047575:	get_view(3): returns 17828 25450 37581 
+1411401047575:	get_view(3): returns 17828 25450 37581 
+1411401047575:	recovery: sync vid_insync 3
+1411401047575:	recovery: sync done
+1411401047575:	recovery: go to sleep 0 0
+1411401048000:	heartbeat from 17828(3) myvid 3
+1411401050000:	get_view(3): returns 17828 25450 37581 
+1411401050000:	heartbeater: current membership 17828,25450,37581
+1411401050000:	doheartbeater to 17828 (3)
+1411401050000:	doheartbeat done 0
+1411401050000:	heartbeater: go to sleep
+1411401051000:	heartbeat from 17828(3) myvid 3

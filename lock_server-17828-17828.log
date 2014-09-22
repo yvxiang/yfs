@@ -1,0 +1,239 @@
+./lock_server 17828 17828
+logread
+1411401045554:	get_view(1): returns 17828
+1411401045554:	config::reconstruct: 1 17828
+1411401045554:	commit_change: new view (1)  last vs (0,0) 17828 insync 0
+1411401045554:	heartbeater: go to sleep
+1411401045554:	get_view(1): returns 17828
+1411401045555:	get_view(0): returns 
+1411401045555:	set_primary: primary stays 17828
+1411401045555:	get_view(1): returns 17828
+1411401045555:	get_view(1): returns 17828
+1411401045555:	recovery: sync vid_insync 1
+1411401046561:	joinreq: src 25450 last (0,0) mylast (0,0)
+1411401046561:	get_view(1): returns 17828
+1411401046561:	config::add 25450
+1411401046561:	start: initiate paxos for 17828 w. i=2 v=17828 25450  stable=1
+1411401046561:	handler_mgr::get_handle trying to bind...17828
+1411401046562:	handle_mgr::get_handle bind succeeded 17828
+1411401046562:	paxos::manager: received a majority of prepare responses
+1411401046562:	paxos::manager: received a majority of accept responses
+1411401046562:	decidereq for accepted instance 2 (my instance 1) v=17828 25450 
+1411401046562:	acceptor::commit: instance=2 has v= 17828 25450 
+1411401046562:	commit: highestaccepteinstance = 2
+1411401046562:	config::paxos_commit: 2: 17828,25450
+1411401046562:	config::paxos_commit: is 17828 still a member?
+1411401046562:	commit_change: new view (2)  last vs (0,0) 17828 insync 1
+1411401046562:	get_view(2): returns 17828 25450 
+1411401046562:	get_view(1): returns 17828
+1411401046562:	set_primary: primary stays 17828
+1411401046562:	get_view(2): returns 17828 25450 
+1411401046562:	recovery: sync done
+1411401046562:	get_view(2): returns 17828 25450 
+1411401046562:	recovery: sync vid_insync 2
+1411401046562:	config::add: proposer returned success
+1411401046562:	get_view(2): returns 17828 25450 
+1411401046563:	joinreq: ret 0 log done 1 17828
+propseen 1 17828
+accepted 1 17828 17828 25450 
+done 2 17828 25450 
+
+:1411401047572:	joinreq: src 37581 last (0,0) mylast (0,0)
+1411401047572:	get_view(2): returns 17828 25450 
+1411401047572:	config::add 37581
+1411401047572:	start: initiate paxos for 17828,25450 w. i=3 v=17828 25450 37581  stable=1
+1411401047572:	handler_mgr::get_handle trying to bind...25450
+1411401047573:	handle_mgr::get_handle bind succeeded 25450
+1411401047573:	paxos::manager: received a majority of prepare responses
+1411401047573:	paxos::manager: received a majority of accept responses
+1411401047573:	decidereq for accepted instance 3 (my instance 2) v=17828 25450 37581 
+1411401047573:	acceptor::commit: instance=3 has v= 17828 25450 37581 
+1411401047573:	commit: highestaccepteinstance = 3
+1411401047573:	config::paxos_commit: 3: 17828,25450,37581
+1411401047574:	config::paxos_commit: is 17828 still a member?
+1411401047574:	config::paxos_commit: is 25450 still a member?
+1411401047574:	commit_change: new view (3)  last vs (0,0) 17828 insync 1
+1411401047574:	get_view(3): returns 17828 25450 37581 
+1411401047574:	get_view(2): returns 17828 25450 
+1411401047574:	set_primary: primary stays 17828
+1411401047574:	get_view(3): returns 17828 25450 37581 
+1411401047574:	recovery: sync done
+1411401047574:	get_view(3): returns 17828 25450 37581 
+1411401047574:	recovery: sync vid_insync 3
+1411401047574:	config::add: proposer returned success
+1411401047574:	get_view(3): returns 17828 25450 37581 
+1411401047574:	joinreq: ret 0 log done 1 17828
+propseen 1 17828
+accepted 1 17828 17828 25450 
+done 2 17828 25450 
+propseen 2 17828
+accepted 2 17828 17828 25450 37581 
+done 3 17828 25450 37581 
+
+:1411401048000:	get_view(3): returns 17828 25450 37581 
+1411401048000:	heartbeater: current membership 17828,25450,37581
+1411401048000:	doheartbeater to 25450 (3)
+1411401048000:	doheartbeat done 0
+1411401048000:	doheartbeater to 37581 (3)
+1411401048000:	handler_mgr::get_handle trying to bind...37581
+1411401048000:	handle_mgr::get_handle bind succeeded 37581
+1411401048000:	doheartbeat done 0
+1411401048000:	heartbeater: go to sleep
+1411401048588:	get_view(3): returns 17828 25450 37581 
+1411401048588:	rsm::client_members return 17828,25450,37581,17828 m 17828
+1411401048589:	get_view(3): returns 17828 25450 37581 
+1411401048589:	rsm::client_members return 17828,25450,37581,17828 m 17828
+1411401048591:	get_view(3): returns 17828 25450 37581 
+1411401048591:	rsm::client_members return 17828,25450,37581,17828 m 17828
+1411401048592:	get_view(3): returns 17828 25450 37581 
+1411401048592:	rsm::client_members return 17828,25450,37581,17828 m 17828
+1411401048593:	get_view(3): returns 17828 25450 37581 
+1411401048593:	rsm::client_members return 17828,25450,37581,17828 m 17828
+1411401048593:	get_view(3): returns 17828 25450 37581 
+1411401048593:	rsm::client_members return 17828,25450,37581,17828 m 17828
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401049000:	heartbeat from 25450(3) myvid 3
+1411401050000:	heartbeat from 37581(3) myvid 3
+1411401051000:	get_view(3): returns 17828 25450 37581 
+1411401051000:	heartbeater: current membership 17828,25450,37581
+1411401051000:	doheartbeater to 25450 (3)
+1411401051000:	doheartbeat done 0
+1411401051000:	doheartbeater to 37581 (3)
+1411401051000:	doheartbeat done 0
+1411401051000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401052000:	heartbeat from 25450(3) myvid 3
+1411401054000:	get_view(3): returns 17828 25450 37581 
+1411401054047:	heartbeater: current membership 17828,25450,37581
+1411401054047:	doheartbeater to 25450 (3)
+1411401054051:	doheartbeat done 0
+1411401054051:	doheartbeater to 37581 (3)
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401055000:	heartbeat from 25450(3) myvid 3
+1411401055051:	doheartbeat: problem with 37581 (-1) my vid 3 his vid 0
+1411401055051:	doheartbeat done 2
+1411401055051:	config::remove: myvid 3 remove? 37581
+1411401055051:	start: initiate paxos for 17828,25450,37581 w. i=4 v=17828 25450  stable=1
+1411401056051:	paxos::manager: received a majority of prepare responses
+1411401056052:	paxos::manager: received a majority of accept responses
+1411401056052:	decidereq for accepted instance 4 (my instance 3) v=17828 25450 
+1411401056052:	acceptor::commit: instance=4 has v= 17828 25450 
+1411401056052:	commit: highestaccepteinstance = 4
+1411401056052:	config::paxos_commit: 4: 17828,25450
+1411401056052:	config::paxos_commit: is 17828 still a member?
+1411401056052:	config::paxos_commit: is 25450 still a member?
+1411401056052:	config::paxos_commit: is 37581 still a member?
+1411401056052:	config::paxos_commit: delete 37581
+1411401056052:	handle_mgr::delete_handle_wo: cl 37581 refcnt 0
+rpcc::cancel: force callers to fail
+rpcc::cancel: done
+1411401056052:	commit_change: new view (4)  last vs (0,0) 17828 insync 1
+1411401056052:	get_view(4): returns 17828 25450 
+1411401056052:	get_view(3): returns 17828 25450 37581 
+1411401056052:	set_primary: primary stays 17828
+1411401056052:	get_view(4): returns 17828 25450 
+1411401056052:	recovery: sync done
+1411401056052:	get_view(4): returns 17828 25450 
+1411401056052:	recovery: sync vid_insync 4
+1411401056053:	config::remove: proposer returned success
+1411401056053:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401058000:	heartbeat from 25450(4) myvid 4
+1411401059000:	get_view(4): returns 17828 25450 
+1411401059049:	heartbeater: current membership 17828,25450
+1411401059049:	doheartbeater to 25450 (4)
+1411401059064:	doheartbeat done 0
+1411401059064:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401061000:	heartbeat from 25450(4) myvid 4
+1411401062000:	get_view(4): returns 17828 25450 
+1411401062000:	heartbeater: current membership 17828,25450
+1411401062000:	doheartbeater to 25450 (4)
+1411401062000:	doheartbeat done 0
+1411401062000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401064000:	heartbeat from 25450(4) myvid 4
+1411401065000:	get_view(4): returns 17828 25450 
+1411401065000:	heartbeater: current membership 17828,25450
+1411401065000:	doheartbeater to 25450 (4)
+1411401065000:	doheartbeat done 0
+1411401065000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401067000:	heartbeat from 25450(4) myvid 4
+1411401068000:	get_view(4): returns 17828 25450 
+1411401068000:	heartbeater: current membership 17828,25450
+1411401068000:	doheartbeater to 25450 (4)
+1411401068000:	doheartbeat done 0
+1411401068000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401070000:	heartbeat from 25450(4) myvid 4
+1411401071000:	get_view(4): returns 17828 25450 
+1411401071000:	heartbeater: current membership 17828,25450
+1411401071000:	doheartbeater to 25450 (4)
+1411401071000:	doheartbeat done 0
+1411401071000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401073000:	heartbeat from 25450(4) myvid 4
+1411401074000:	get_view(4): returns 17828 25450 
+1411401074000:	heartbeater: current membership 17828,25450
+1411401074000:	doheartbeater to 25450 (4)
+1411401074000:	doheartbeat done 0
+1411401074000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401076000:	heartbeat from 25450(4) myvid 4
+1411401077000:	get_view(4): returns 17828 25450 
+1411401077000:	heartbeater: current membership 17828,25450
+1411401077000:	doheartbeater to 25450 (4)
+1411401077000:	doheartbeat done 0
+1411401077000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401079000:	heartbeat from 25450(4) myvid 4
+1411401080000:	get_view(4): returns 17828 25450 
+1411401080000:	heartbeater: current membership 17828,25450
+1411401080000:	doheartbeater to 25450 (4)
+1411401080000:	doheartbeat done 0
+1411401080000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401082000:	heartbeat from 25450(4) myvid 4
+1411401083000:	get_view(4): returns 17828 25450 
+1411401083000:	heartbeater: current membership 17828,25450
+1411401083000:	doheartbeater to 25450 (4)
+1411401083000:	doheartbeat done 0
+1411401083000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401085000:	heartbeat from 25450(4) myvid 4
+1411401086000:	get_view(4): returns 17828 25450 
+1411401086000:	heartbeater: current membership 17828,25450
+1411401086000:	doheartbeater to 25450 (4)
+1411401086000:	doheartbeat done 0
+1411401086000:	heartbeater: go to sleep
+rsm is in viewchange
+y:release rsm_mutex
+y:client_invoke return 3
+1411401088000:	heartbeat from 25450(4) myvid 4
