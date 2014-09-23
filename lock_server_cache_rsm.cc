@@ -74,6 +74,8 @@ lock_server_cache_rsm::retryer()
         rpcc *rpc_c = handle(retry_client.client_id).safebind();
         if(rpc_c) {
             int r;
+            tprintf("y:retryer lid = %llu, client = %s\n", retry_client.lid,
+                                    retry_client.client_id.c_str());
             rpc_c->call(rlock_protocol::retry, retry_client.lid,
                 retry_client.xid, r);
         }
@@ -84,6 +86,8 @@ lock_server_cache_rsm::retryer()
 int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id, 
              lock_protocol::xid_t xid, int &)
 {
+  tprintf("y:receive acquire client = %s, lid = %llu, xid = %llu\n", id.c_str(),
+                                                lid, xid);
   lock_protocol::status ret = lock_protocol::OK;
   std::map<lock_protocol::lockid_t, lock_stat>::iterator it;
   std::string client_to_revoke = "";
@@ -103,13 +107,22 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
       if(xid_it == cur_lock.highest_xid_from_client.end() ||
           xid_it->second < xid) {
           cur_lock.highest_xid_release_reply.erase(id);
-          xid_it->second = xid;
+
+          /*
+          if(xid_it == cur_lock.highest_xid_from_client.end()) {
+              cur_lock.highest_xid_from_client.insert(std::make_pair(id, xid));
+          } else {
+              xid_it->second = xid;
+          }
+          */
+          cur_lock.highest_xid_from_client[id] = xid;
+
           if(it->second.holded) {
               ret = lock_protocol::RETRY;
               it->second.waiter.insert(id);
 
               if(!it->second.revoke) {
-                  it->second.revoke = true;
+          //        it->second.revoke = true;
                   revoke_queue.enq(revoke_entry(it->second.holder, lid,
                           cur_lock.highest_xid_from_client[it->second.holder]));
               }
@@ -121,12 +134,19 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
               it->second.waiter.erase(id);        
 
               if(!it->second.waiter.empty()) {
-                  it->second.revoke = true;
+           //       it->second.revoke = true;
                   revoke_queue.enq(revoke_entry(id, lid, xid));
               }
           }
           cur_lock.highest_xid_acquire_reply[id] = ret;
       } else if(xid_it->second == xid) {
+          /*
+          tprintf("y:dumplicated\n");
+          if(it->second.holded) {
+              tprintf("crash retry\n");
+              goto crash_retry;
+          }
+          */
           ret = cur_lock.highest_xid_acquire_reply[id];
       } else {
           tprintf("ERROR acquire with wrong xid\n");
@@ -135,6 +155,8 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
   }
 
   pthread_mutex_unlock(&lock_stat_map_lock);
+  tprintf("y:receive acquire client = %s, lid = %llu, xid = %llu ret = %d\n", id.c_str(),
+                                                lid, xid, ret);
   return ret;
 }
 
@@ -142,6 +164,8 @@ int
 lock_server_cache_rsm::release(lock_protocol::lockid_t lid, std::string id, 
          lock_protocol::xid_t xid, int &r)
 {
+  tprintf("y:receive release client = %s, lid = %llu, xid = %llu\n", id.c_str(),
+                                                    lid, xid);
   lock_protocol::status ret = lock_protocol::OK;
   std::map<lock_protocol::lockid_t, lock_stat>::iterator it;
   std::string client_to_wake_up;
@@ -169,15 +193,20 @@ lock_server_cache_rsm::release(lock_protocol::lockid_t lid, std::string id,
               ret = lock_protocol::RPCERR;
           } else {
               client_reply_map::iterator reply_it = cur_lock.highest_xid_release_reply.find(id);
+              
               if(reply_it == cur_lock.highest_xid_release_reply.end()) {
-
-                  cur_lock.holded = false;
-                  cur_lock.holder = "";
-                  cur_lock.highest_xid_release_reply.insert(std::make_pair(id, xid));
-                  if(!cur_lock.waiter.empty()) {
-                      std::string retryer = *cur_lock.waiter.begin();
-                      retry_queue.enq(retry_entry(retryer, lid,
-                              cur_lock.highest_xid_from_client[retryer]));
+                  if(cur_lock.holder != id) {
+                      ret = lock_protocol::IOERR;
+                      cur_lock.highest_xid_release_reply.insert(std::make_pair(id, ret));
+                  } else {
+                      cur_lock.holded = false;
+                      cur_lock.holder = "";
+                      cur_lock.highest_xid_release_reply.insert(std::make_pair(id, xid));
+                      if(!cur_lock.waiter.empty()) {
+                          std::string retryer = *cur_lock.waiter.begin();
+                          retry_queue.enq(retry_entry(retryer, lid,
+                                  cur_lock.highest_xid_from_client[retryer]));
+                      }
                   }
 
               } else {
@@ -189,6 +218,8 @@ lock_server_cache_rsm::release(lock_protocol::lockid_t lid, std::string id,
       }
   }
 
+  tprintf("y:receive release client = %s, lid = %llu, xid = %llu return %d\n", id.c_str(),
+                                                    lid, xid, ret);
   pthread_mutex_unlock(&lock_stat_map_lock);
   return ret;
 }

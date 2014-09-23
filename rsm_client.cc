@@ -30,6 +30,23 @@ void
 rsm_client::primary_failure()
 {
   // You fill this in for Lab 7
+  /*
+  if(known_mems.empty())
+      return ;
+  rpcc *cl = handle(known_mems.back()).safebind();
+  if(cl) {
+      std::vector<std::string> new_view;
+      int ret = cl->call(rsm_client_protocol::members, 0, 
+                                    new_view, rpcc::to(1000));
+      if(ret == rsm_protocol::OK) {
+          known_mems = new_view;
+          primary = known_mems.back();
+          known_mems.pop_back();
+      }
+  }
+  */
+  primary = known_mems.back();
+  known_mems.pop_back();
 }
 
 rsm_protocol::status

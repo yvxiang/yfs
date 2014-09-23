@@ -103,12 +103,21 @@ lock_client_cache_rsm::acquire(lock_protocol::lockid_t lid)
           it->second.ls = ACQUIRING;
           it->second.retry = false;
           it->second.xid = xid;
+          lock_protocol::xid_t cur_xid = xid;
           xid++;
+
+          /*
+          if(it->second.ls == NONE) {
+              cur_xid = xid;
+              xid++;
+          }
+          */
+        //  it->second.xid = cur_xid;;
 
           pthread_mutex_unlock(&lock_stat_map_lock);
           int r;
           lock_protocol::status  rpcret = rsmc->call(lock_protocol::acquire,
-                                            lid, id, it->second.xid, r); 
+                                            lid, id, cur_xid, r); 
 
           pthread_mutex_lock(&lock_stat_map_lock);
 
@@ -123,10 +132,20 @@ lock_client_cache_rsm::acquire(lock_protocol::lockid_t lid)
       } else if(it->second.ls == FREE) {
           it->second.ls = LOCKED;
           have_lock = true;
-      } else if(it->second.ls == LOCKED || (it->second.ls ==
-                    ACQUIRING && it->second.retry == false) ||
+      } else if(it->second.ls == LOCKED ||
                                  it->second.ls == RELEASING) {
           pthread_cond_wait(&acquire_wait_cond, &lock_stat_map_lock);
+          
+      } else if(it->second.ls == ACQUIRING && it->second.retry == false) {
+          timespec outtime;
+          clock_gettime(CLOCK_REALTIME, &outtime);
+          outtime.tv_sec += 3;
+          int t = pthread_cond_timedwait(&acquire_wait_cond,
+                                &lock_stat_map_lock, &outtime);
+          if(t == ETIMEDOUT) {
+              tprintf("y:sleep 3 seconds\n");
+              it->second.retry = true;
+          }
       }
   } while(!have_lock && !err);
 
@@ -177,8 +196,10 @@ lock_client_cache_rsm::release(lock_protocol::lockid_t lid)
 
 rlock_protocol::status
 lock_client_cache_rsm::revoke_handler(lock_protocol::lockid_t lid, 
-			          lock_protocol::xid_t xid, int &)
+			          lock_protocol::xid_t _xid, int &)
 {
+  tprintf("y:receive revoke client = %s, lid = %llu, xid = %llu\n",
+                                id.c_str(), lid, _xid);
   int ret = rlock_protocol::OK;
   std::map<lock_protocol::lockid_t, lock_stat>::iterator it;
 
@@ -186,12 +207,12 @@ lock_client_cache_rsm::revoke_handler(lock_protocol::lockid_t lid,
 
   //tprintf("%s receive revoke %llu\n", id.c_str(), lid);
   it = lock_stat_map.find(lid);
-  if(it->second.xid == xid) {
+  if(it->second.xid == _xid) {
       if(it != lock_stat_map.end()) {
           if(it->second.ls == FREE) {
               it->second.ls = RELEASING;
               it->second.revoke = false;
-              release_queue.enq(release_entry(lid, xid));
+              release_queue.enq(release_entry(lid, _xid));
           } else {
               if(it->second.revoke)
                   tprintf("ERR %s try revoke %llu twice\n", id.c_str(), lid);
@@ -201,7 +222,7 @@ lock_client_cache_rsm::revoke_handler(lock_protocol::lockid_t lid,
           tprintf("ERROR try to revoke a lock that hasn't acquired\n");
       }
   } else {
-      tprintf("ERROR try to revoke with a wrong xid\n");
+      tprintf("ERROR try to revoke with a wrong xid(%d, %d)\n", it->second.xid, _xid);
   }
 
   pthread_mutex_unlock(&lock_stat_map_lock);
@@ -219,6 +240,7 @@ lock_client_cache_rsm::retry_handler(lock_protocol::lockid_t lid,
   pthread_mutex_lock(&lock_stat_map_lock);
 
   //tprintf("%s receive retry lock %llu from server\n", id.c_str(), lid);
+  tprintf("y:receive retry lid = %llu\n", lid);
   it = lock_stat_map.find(lid);
   if(it == lock_stat_map.end()) {
       tprintf("ERROR try to retry a lock that hasn't acquire");

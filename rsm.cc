@@ -405,22 +405,41 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
       size_t cur_client;
       printf("send to %d clients\n", clients.size());
 
+     // std::string cur_primary = primary;
+
       pthread_mutex_unlock(&rsm_mutex);
 
-      for(cur_client = 1; cur_client < clients.size(); cur_client++) {
+      bool first = true;
+      for(cur_client = 0; cur_client < clients.size() &&
+                     ret == rsm_client_protocol::OK; cur_client++) {
+          if(clients[cur_client] == primary)
+              continue;
+
+
           rpcc *cl = handle(clients[cur_client]).safebind();
           if(cl) {
               int dummy;
               rsm_protocol::status rpcret;
               rpcret = cl->call(rsm_protocol::invoke, procno, cur_stamp,
-                                            req, dummy, rpcc::to(5000));
+                                            req, dummy, rpcc::to(1000));
 
               printf("receive %d from %s\n", rpcret, clients[cur_client].c_str());
               if(rpcret != rsm_protocol::OK) {
                   printf("rpcret is not rsm_protocol::OK\n");
                   ret = rsm_client_protocol::BUSY;
               }
+          } else {
+              ret = rsm_client_protocol::BUSY;
           }
+
+          if(first) {
+              if(primary == cfg->myaddr())
+                  tprintf("y:kill master\n");
+              breakpoint1();
+              partition1();
+              first = false;
+          }
+
       }
       if(ret == rsm_client_protocol::OK) {
           printf("y:slaves execute OK, now the primary\n");
@@ -462,6 +481,7 @@ rsm::invoke(int proc, viewstamp vs, std::string req, int &dummy)
       last_myvs = vs;
       myvs.seqno++;
       ret = rsm_protocol::OK;
+      breakpoint1();
   }
   printf("y:rsm::invoke returns %d\n", ret);
   return ret;
