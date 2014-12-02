@@ -40,9 +40,6 @@ __retry:
         if((it->second).cur_stat == BUSY) {
             pthread_mutex_unlock(&operation_lock);
             goto __retry;
-            r = -1;
-            pthread_mutex_unlock(&operation_lock);
-            return lock_protocol::RETRY;
         } else {
             (it->second).cur_stat = BUSY;
             (it->second).holder_id = clt;
