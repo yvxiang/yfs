@@ -12,10 +12,10 @@
     
 class lock_server {
 private:
-    typedef enum {
+    enum lock_stat {
         FREE,
         BUSY
-    }lock_stat;
+    };
 
     typedef struct {
         lock_stat cur_stat;
