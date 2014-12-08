@@ -138,18 +138,10 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     if(!isdir(parent_num)) return IOERR;
     std::string dir_con;
     
-    char mod = 'a';
-    FILE *fp = fopen("/share/yc/log", &mod);
   
     int ret = get(parent_num, dir_con);
     if(ret != OK)  return ret;
-    /*
-    fprintf(fp, "old dic con\n");
-    fprintf(fp, "------------\n");
-    const char *old = dir_con.c_str();
-    fprintf(fp, "%s\n", old);
-    fprintf(fp, "------------\n");
-    */
+
     std::string::iterator end = dir_con.begin();
     std::string cur_file_name;
     std::string cur_file_con;
@@ -169,39 +161,24 @@ yfs_client::create(inum parent_num, std::string new_file_name,
             break;
         end++;
     }
-    //const char *n = new_file_name.c_str();
-    //printf("has check the dir, we are allowed to create file %s\n", n); 
 
-    // now pick up a inum for the new file(dic)
-//    srandom(getpid());
-   // int tmp_num;
     if(is_dir) {
         new_file_inum = rand() & 0x7FFFFFFF;
     } else {
         new_file_inum = (rand() & 0xFFFFFFFF) | (1 << 31);
     }
-    //fprintf(fp, "new file num:!!!!!!! %llu\n", new_file_inum);
+
     if(dir_con.size() != 0) {
         new_file_name.insert(0, 1, ' ');
     }
     new_file_name += " " + filename(new_file_inum);
     dir_con += new_file_name; 
     ret = put(parent_num, dir_con);
-   // fprintf(fp, "we have update the dic %lld\n", parent_num);
-    /*
-    const char *c_dic = dir_con.c_str();
-    fprintf(fp, "\n\n");
-    fprintf(fp, "new dic\n");
-    fprintf(fp, "--------\n");
-    fprintf(fp, "%s\n", c_dic);
-    fprintf(fp, "--------\n");
-    */
+
     if(ret != OK)   return ret;
 
     ret = put(new_file_inum, cur_file_con);
-    //fprintf(fp, "we have touch the new file %s, %d\n", n, new_file_inum);
 
-    fclose(fp);
     return OK;
 
 }
