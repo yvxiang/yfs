@@ -146,6 +146,7 @@ yfs_client::create(inum parent_num, std::string new_file_name,
     std::string cur_file_name;
     std::string cur_file_con;
     while(end != dir_con.end()) {
+        cur_file_name = "";
         while(end != dir_con.end() && *end != ' ') {
             cur_file_name += *end;
             end++;
