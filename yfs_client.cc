@@ -258,7 +258,6 @@ yfs_client::write(inum inum, std::string str, off_t off,
     size = str.size();
     ret = put(inum, file_con);
     return ret;
-  return ret;   
 }
 
 
