@@ -125,7 +125,6 @@ fuseserver_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
   //printf("fuseserver_setattr 0x%x\n", to_set);
   if (FUSE_SET_ATTR_SIZE & to_set) {
     printf("   fuseserver_setattr set size to %zu\n", attr->st_size);
-    struct stat st;
     // You fill this in for Lab 2
     // Change the above line to "#if 1", and your code goes here
     // Note: fill st using getattr before fuse_reply_attr
@@ -137,9 +136,9 @@ fuseserver_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
         return ;
     }
     to_set = to_set > 0 ? to_set : 0;
-    if(to_set > file_con.size()) {
+    if((size_t)to_set > file_con.size()) {
         file_con.resize(to_set, '\0');
-    } else if(to_set < file_con.size()){
+    } else if((size_t)to_set < file_con.size()){
         file_con.resize(to_set);
     }
     ret = yfs->put(ino, file_con);
@@ -147,8 +146,8 @@ fuseserver_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
         fuse_reply_err(req, ENOSYS);
         return ;
     }
-    getattr(ino, st);
-    fuse_reply_attr(req, &st, 0);
+    getattr(ino, *attr);
+    fuse_reply_attr(req, attr, 0);
 
   } else {
     fuse_reply_err(req, ENOSYS);
