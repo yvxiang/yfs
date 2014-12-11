@@ -22,13 +22,13 @@ class lock_release_user {
 
 class lock_client_cache : public lock_client {
 
- typedef enum {
+ enum LOCK_STAT {
      NONE,
      FREE,
      LOCKED,
      ACQUIRING,
      RELEASING
- }LOCK_STAT;
+ };
 
  struct lock_stat {
      LOCK_STAT ls;
