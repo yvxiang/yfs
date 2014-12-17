@@ -14,7 +14,7 @@ class extent_client {
       bool dirty;
       std::string content;
 //      extent_protocol::attr file_attr;
-      file(std::string &buf) : dirty(false), content(buf) {}
+      file(const std::string &buf) : dirty(false), content(buf) {}
   };
   struct _attr {
       bool dirty;
