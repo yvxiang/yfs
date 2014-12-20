@@ -190,8 +190,10 @@ proposer::prepare(unsigned instance, std::vector<std::string> &accepts,
           } else {
               if(cur_res.accept == true) {
                   accepts.push_back(nodes[cur_node]);
-                  if(cur_res.n_a >= max_n_a)
+                  if(cur_res.n_a >= max_n_a) {
+                      max_n_a = cur_res.n_a;
                       v = cur_res.v_a;
+                  }
               }
           }
       }
