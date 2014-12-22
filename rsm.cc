@@ -388,7 +388,10 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
 {
   int ret = rsm_client_protocol::OK;
   // You fill this in for Lab 7
-
+    if(!amiprimary()) {
+        ret = rsm_client_protocol::NOTPRIMARY;
+        return ret;
+    }
     pthread_mutex_lock(&invoke_mutex);
     pthread_mutex_lock(&rsm_mutex);
  // printf("y:got rsm_mutex\n");
@@ -396,8 +399,6 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
   if(inviewchange) {
       printf("rsm is in viewchange\n");
       ret = rsm_client_protocol::BUSY;
-  } else if(primary != cfg->myaddr()) {
-      ret = rsm_client_protocol::NOTPRIMARY;
   } else {
       viewstamp cur_stamp = myvs;
 
