@@ -207,8 +207,8 @@ lock_client_cache_rsm::revoke_handler(lock_protocol::lockid_t lid,
 
   //tprintf("%s receive revoke %llu\n", id.c_str(), lid);
   it = lock_stat_map.find(lid);
-  if(it->second.xid == _xid) {
-      if(it != lock_stat_map.end()) {
+  if(it != lock_stat_map.end()) {
+      if(it->second.xid == xid) {
           if(it->second.ls == FREE) {
               it->second.ls = RELEASING;
               it->second.revoke = false;
