@@ -550,7 +550,6 @@ rsm::transferdonereq(std::string m, unsigned vid, int &)
       } else if(backups.empty()) {
           //wake up recovery thread
           pthread_cond_signal(&recovery_cond);
-          insync = false;
       }
   }
 
