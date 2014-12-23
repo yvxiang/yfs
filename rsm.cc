@@ -359,7 +359,7 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
   if(inviewchange) {
       printf("rsm is in viewchange\n");
       ret = rsm_client_protocol::BUSY;
-  } else if(primary != cfg->myaddr()) {
+  } else if(!amiprimary()) {
       ret = rsm_client_protocol::NOTPRIMARY;
   } else {
       viewstamp cur_stamp = myvs;
