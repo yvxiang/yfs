@@ -393,7 +393,6 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
         return ret;
     }
     pthread_mutex_lock(&invoke_mutex);
-    pthread_mutex_lock(&rsm_mutex);
  // printf("y:got rsm_mutex\n");
 
   if(inviewchange) {
@@ -408,7 +407,6 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
 
      // std::string cur_primary = primary;
 
-      pthread_mutex_unlock(&rsm_mutex);
 
       bool first = true;
       for(cur_client = 0; cur_client < clients.size() &&
@@ -449,10 +447,8 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
           myvs.seqno++;
       }
 
-      pthread_mutex_lock(&rsm_mutex);
   }
 
-  pthread_mutex_unlock(&rsm_mutex);
   pthread_mutex_unlock(&invoke_mutex);
   printf("y:release rsm_mutex\n");
   printf("y:client_invoke return %d\n", ret);
