@@ -238,12 +238,9 @@ rsm::sync_with_primary()
   // or there is a commited viewchange
   bool ret = false;
 
-  /*
   do {
     ret = statetransfer(m);
   } while(!ret && !inviewchange);
-  */
-  ret = statetransfer(m);
 
   if(ret)
       ret = statetransferdone(m);
