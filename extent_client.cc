@@ -7,16 +7,13 @@
 #include <unistd.h>
 #include <time.h>
 
+#include "rsm_client.h"
+
 // The calls assume that the caller holds a lock on the extent
 
 extent_client::extent_client(std::string dst)
 {
-  sockaddr_in dstsock;
-  make_sockaddr(dst.c_str(), &dstsock);
-  cl = new rpcc(dstsock);
-  if (cl->bind() != 0) {
-    printf("extent_client: bind failed\n");
-  }
+  rsmc = new rsm_client(dst);
 }
 
 extent_protocol::status
@@ -34,7 +31,7 @@ extent_client::get(extent_protocol::extentid_t eid, std::string &buf)
 //      it->second.file_attr.atime = time(NULL);
       printf("get from cache %u %s\n", eid, buf.c_str());
   } else {
-      ret = cl->call(extent_protocol::get, eid, buf);
+      ret = rsmc->call(extent_protocol::get, eid, buf);
       file_cache.insert(std::make_pair(eid, file(buf)));
       it = file_cache.find(eid);
  //     it->second.file_attr.atime = time(NULL);
@@ -67,7 +64,7 @@ extent_client::getattr(extent_protocol::extentid_t eid,
       attr.ctime = it->second.file_attr.ctime;
       attr.mtime = it->second.file_attr.mtime;
   } else {
-      ret = cl->call(extent_protocol::getattr, eid, attr);
+      ret = rsmc->call(extent_protocol::getattr, eid, attr);
       _attr new_attr;
       new_attr.file_attr.size = attr.size;
       new_attr.file_attr.atime = attr.atime;
@@ -170,7 +167,7 @@ extent_client::flush(extent_protocol::extentid_t eid)
     if(it != file_cache.end()) {
         int r;
         if(it->second.dirty)
-            cl->call(extent_protocol::put, eid, it->second.content, r);
+            rsmc->call(extent_protocol::put, eid, it->second.content, r);
         printf("flush out:\n");
         printf("%llu\n", eid);
         printf("%s\n", it->second.content.c_str());
@@ -179,4 +176,10 @@ extent_client::flush(extent_protocol::extentid_t eid)
     } else {
         printf("ERROR try to flush a cache that doesn't exist\n");
     }
+}
+std::string marshal_state()
+{
+}
+void unmarshal_state(std::string state)
+{
 }

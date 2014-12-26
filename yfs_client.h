@@ -10,10 +10,12 @@
 #include "lock_client.h"
 #include "lock_client_cache_rsm.h"
 
+class lock_release_handler;
+
 class yfs_client {
   extent_client *ec;
   lock_release_handler *lrh;
-  lock_client_cache lc;
+  lock_client_cache_rsm lc;
  public:
 
   typedef unsigned long long inum;

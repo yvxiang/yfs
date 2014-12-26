@@ -40,7 +40,7 @@ lab4: yfs_client extent_server lock_server lock_tester test-lab-3-b\
 	 test-lab-3-c
 lab5: yfs_client extent_server lock_server test-lab-3-b test-lab-3-c
 lab6: lock_server rsm_tester
-lab7: lock_tester lock_server rsm_tester
+lab7: lock_tester lock_server rsm_tester extent_server test-lab-3-b test-lab-3-c
 
 hfiles1=rpc/fifo.h rpc/connection.h rpc/rpc.h rpc/marshall.h rpc/method_thread.h\
 	rpc/thr_pool.h rpc/pollmgr.h rpc/jsl_log.h rpc/slock.h rpc/rpctest.cc\

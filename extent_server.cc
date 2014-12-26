@@ -8,7 +8,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-extent_server::extent_server()
+#include "rsm.h"
+#include "rsm_state_transfer.h"
+
+extent_server::extent_server(class rsm *_rsms) : rsms(_rsms)
 { pthread_mutex_init(&operation_lock, NULL);
   file root_dic;
   root_dic.content = "";
@@ -16,6 +19,7 @@ extent_server::extent_server()
       root_dic.file_attr.mtime = time(NULL);
   file_map.insert(std::make_pair<extent_protocol::extentid_t, file> (
                     0x00000001, root_dic));
+  rsms->set_state_transfer(this);
 }
 
 

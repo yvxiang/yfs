@@ -8,6 +8,8 @@
 #include "extent_protocol.h"
 #include "rpc.h"
 
+#include "rsm_client.h"
+
 class extent_client {
  public:
   struct file {
@@ -22,6 +24,7 @@ class extent_client {
   };
  private:
   rpcc *cl;
+  rsm_client *rsmc;
   std::map<extent_protocol::extentid_t, file> file_cache;
   std::map<extent_protocol::extentid_t, _attr> file_attr_cache;
 

@@ -8,10 +8,13 @@
 #include "extent_protocol.h"
 #include "yfs_client.h"
 
-class extent_server {
+#include "rsm.h"
+#include "rsm_state_transfer.h"
+
+class extent_server : public rsm_state_transfer {
 
  public:
-  extent_server();
+  extent_server(class rsm *_rsms = 0);
   struct file {
       std::string content;
       extent_protocol::attr file_attr;
@@ -21,9 +24,12 @@ class extent_server {
   int getattr(extent_protocol::extentid_t id, extent_protocol::attr &);
   int setattr(extent_protocol::extentid_t id, extent_protocol::attr&);
   int remove(extent_protocol::extentid_t id, int &);
+  std::string marshal_state();
+  void unmarshal_state(std::string state);
  private:
   pthread_mutex_t operation_lock;
   std::map<extent_protocol::extentid_t, file> file_map;
+  class rsm *rsms;
 
 
 

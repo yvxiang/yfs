@@ -13,7 +13,7 @@ main(int argc, char *argv[])
 {
   int count = 0;
 
-  if(argc != 2){
+  if(argc != 3){
     fprintf(stderr, "Usage: %s port\n", argv[0]);
     exit(1);
   }
@@ -25,14 +25,16 @@ main(int argc, char *argv[])
     count = atoi(count_env);
   }
 
-  rpcs server(atoi(argv[1]), count);
-  extent_server ls;
+  rsm rsms(argv[1], argv[2]);
+  extent_server ls(&rsms);
 
-  server.reg(extent_protocol::get, &ls, &extent_server::get);
-  server.reg(extent_protocol::getattr, &ls, &extent_server::getattr);
-  server.reg(extent_protocol::put, &ls, &extent_server::put);
-  server.reg(extent_protocol::remove, &ls, &extent_server::remove);
-  server.reg(extent_protocol::setattr, &ls, &extent_server::setattr);
+  //rsms.set_state_transfer((rsm_state_transfer)&ls);
+  rsms.set_state_transfer(&ls);
+  rsms.reg(extent_protocol::get, &ls, &extent_server::get);
+  rsms.reg(extent_protocol::getattr, &ls, &extent_server::getattr);
+  rsms.reg(extent_protocol::put, &ls, &extent_server::put);
+  rsms.reg(extent_protocol::remove, &ls, &extent_server::remove);
+  rsms.reg(extent_protocol::setattr, &ls, &extent_server::setattr);
 
   while(1)
     sleep(1000);
