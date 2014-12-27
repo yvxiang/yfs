@@ -14,7 +14,8 @@
 class extent_server : public rsm_state_transfer {
 
  public:
-  extent_server(class rsm *_rsms = 0);
+  extent_server(rsm *_rsms = 0);
+  ~extent_server();
   struct file {
       std::string content;
       extent_protocol::attr file_attr;

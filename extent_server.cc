@@ -11,7 +11,7 @@
 #include "rsm.h"
 #include "rsm_state_transfer.h"
 
-extent_server::extent_server(class rsm *_rsms) : rsms(_rsms)
+extent_server::extent_server(rsm *_rsms) : rsms(_rsms)
 { pthread_mutex_init(&operation_lock, NULL);
   file root_dic;
   root_dic.content = "";
@@ -20,6 +20,10 @@ extent_server::extent_server(class rsm *_rsms) : rsms(_rsms)
   file_map.insert(std::make_pair<extent_protocol::extentid_t, file> (
                     0x00000001, root_dic));
   rsms->set_state_transfer(this);
+}
+extent_server::~extent_server()
+{
+
 }
 
 
@@ -154,4 +158,9 @@ int extent_server::remove(extent_protocol::extentid_t id, int &)
 
   return extent_protocol::IOERR;
 }
-
+std::string extent_server::marshal_state()
+{
+}
+void extent_server::unmarshal_state(std::string state)
+{
+}

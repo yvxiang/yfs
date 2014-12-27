@@ -99,7 +99,7 @@ endif
 yfs_client : $(patsubst %.cc,%.o,$(yfs_client)) rpc/librpc.a
 
 extent_server=extent_server.cc extent_smain.cc
-extent_server : $(patsubst %.cc,%.o,$(extent_server)) rpc/librpc.a
+extent_server : $(patsubst %.cc,%.o,$(extent_server)) rpc/librpc.a log.o paxos.o config.o handle.o rsm.o
 
 test-lab-3-b=test-lab-3-b.c
 test-lab-3-b:  $(patsubst %.c,%.o,$(test_lab_4-b)) rpc/librpc.a
