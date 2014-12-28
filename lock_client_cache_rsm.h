@@ -11,6 +11,7 @@
 #include "lang/verify.h"
 
 #include "rsm_client.h"
+#include "extent_client.h"
 
 // Classes that inherit lock_release_user can override dorelease so that 
 // that they will be called when lock_client releases a lock.
@@ -18,9 +19,16 @@
 class lock_release_user {
  public:
   virtual void dorelease(lock_protocol::lockid_t) = 0;
-  virtual ~lock_release_user() {};
+  virtual ~lock_release_user() {}
 };
 
+class lock_release_handler : public lock_release_user {
+  public:
+    lock_release_handler(extent_client *p) : release_ec_pointer(p) {}
+    void dorelease(lock_protocol::lockid_t);
+  private:
+    extent_client *release_ec_pointer;
+};
 
 class lock_client_cache_rsm;
 
@@ -53,7 +61,7 @@ class lock_client_cache_rsm : public lock_client {
 
  private:
   rsm_client *rsmc;
-  class lock_release_user *lu;
+  lock_release_handler *lu;
   int rlock_port;
   std::string hostname;
   std::string id;
@@ -64,8 +72,9 @@ class lock_client_cache_rsm : public lock_client {
   fifo<release_entry> release_queue;
  public:
   static int last_port;
-  lock_client_cache_rsm(std::string xdst, class lock_release_user *l = 0);
-  virtual ~lock_client_cache_rsm() {};
+  lock_client_cache_rsm(std::string xdst, class lock_release_handler *l = 0);
+  virtual ~lock_client_cache_rsm() {}
+  void set_lu_pointer(lock_release_handler *l);
   lock_protocol::status acquire(lock_protocol::lockid_t);
   virtual lock_protocol::status release(lock_protocol::lockid_t);
   void releaser();

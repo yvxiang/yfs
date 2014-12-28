@@ -21,7 +21,7 @@ releasethread(void *x)
 int lock_client_cache_rsm::last_port = 0;
 
 lock_client_cache_rsm::lock_client_cache_rsm(std::string xdst, 
-				     class lock_release_user *_lu)
+				     class lock_release_handler *_lu)
   : lock_client(xdst), lu(_lu)
 {
   srand(time(NULL)^last_port);
@@ -256,4 +256,12 @@ lock_client_cache_rsm::retry_handler(lock_protocol::lockid_t lid,
   pthread_mutex_unlock(&lock_stat_map_lock);
   return ret;
 }
+void lock_release_handler::dorelease(lock_protocol::lockid_t lid)
+{
+  release_ec_pointer->flush(lid);
+}
 
+void lock_client_cache_rsm::set_lu_pointer(lock_release_handler *p)
+{
+        lu = p;
+}

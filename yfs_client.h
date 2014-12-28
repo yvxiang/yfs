@@ -10,7 +10,6 @@
 #include "lock_client.h"
 #include "lock_client_cache_rsm.h"
 
-class lock_release_handler;
 
 class yfs_client {
   extent_client *ec;
