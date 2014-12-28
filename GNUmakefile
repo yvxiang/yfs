@@ -93,9 +93,9 @@ endif
 ifeq ($(LAB7GE),1)
   yfs_client += rsm_client.cc lock_client_cache_rsm.cc
 endif
-ifeq ($(LAB4GE),1)
-  yfs_client += lock_client_cache.cc
-endif
+#ifeq ($(LAB4GE),1)
+#  yfs_client += lock_client_cache.cc
+#endif
 yfs_client : $(patsubst %.cc,%.o,$(yfs_client)) rpc/librpc.a
 
 extent_server=extent_server.cc extent_smain.cc
