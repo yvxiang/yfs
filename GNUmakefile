@@ -40,7 +40,7 @@ lab4: yfs_client extent_server lock_server lock_tester test-lab-3-b\
 	 test-lab-3-c
 lab5: yfs_client extent_server lock_server test-lab-3-b test-lab-3-c
 lab6: lock_server rsm_tester
-lab7: lock_tester lock_server rsm_tester extent_server test-lab-3-b test-lab-3-c
+lab7: yfs_client lock_tester lock_server rsm_tester extent_server test-lab-3-b test-lab-3-c
 
 hfiles1=rpc/fifo.h rpc/connection.h rpc/rpc.h rpc/marshall.h rpc/method_thread.h\
 	rpc/thr_pool.h rpc/pollmgr.h rpc/jsl_log.h rpc/slock.h rpc/rpctest.cc\
@@ -65,9 +65,9 @@ lock_demo=lock_demo.cc lock_client.cc
 lock_demo : $(patsubst %.cc,%.o,$(lock_demo)) rpc/librpc.a
 
 lock_tester=lock_tester.cc lock_client.cc
-ifeq ($(LAB4GE),1)
-  lock_tester += lock_client_cache.cc
-endif
+#ifeq ($(LAB4GE),1)
+#  lock_tester += lock_client_cache.cc
+#endif
 ifeq ($(LAB7GE),1)
   lock_tester+=rsm_client.cc handle.cc lock_client_cache_rsm.cc extent_client.cc
 endif
@@ -86,7 +86,7 @@ endif
 
 lock_server : $(patsubst %.cc,%.o,$(lock_server)) rpc/librpc.a
 
-yfs_client=yfs_client.cc extent_client.cc fuse.cc
+yfs_client=yfs_client.cc extent_client.cc fuse.cc handle.cc log.cc
 ifeq ($(LAB3GE),1)
   yfs_client += lock_client.cc
 endif
