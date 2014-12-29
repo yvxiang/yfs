@@ -160,7 +160,54 @@ int extent_server::remove(extent_protocol::extentid_t id, int &)
 }
 std::string extent_server::marshal_state()
 {
+  std::ostringstream ost;
+  std::string r;
+
+  pthread_mutex_lock(&operation_lock);
+
+  marshall rep;
+  unsigned int file_map_size = file_map.size();
+  rep << file_map_size;
+  std::map<extent_protocol::extentid_t, file>::iterator it;
+
+  for(it = file_map.begin(); it != file_map.end(); it++) {
+      extent_protocol::extentid_t ino = it->first;
+      rep << ino;
+      const file &cur_file = it->second;
+
+      rep << cur_file.content;
+      rep << cur_file.file_attr.atime;
+      rep << cur_file.file_attr.mtime;
+      rep << cur_file.file_attr.ctime;
+      rep << cur_file.file_attr.size;
+  }
+
+  r = rep.str();
+  pthread_mutex_unlock(&operation_lock);
+
+  return r;
 }
 void extent_server::unmarshal_state(std::string state)
 {
+  unmarshall rep(state);
+  unsigned int file_map_size;
+
+  pthread_mutex_lock(&operation_lock);
+
+  rep >> file_map_size;
+  while(file_map_size--) {
+    extent_protocol::extentid_t cur_ino;
+    rep >> cur_ino;
+
+    file cur_file;
+    rep >> cur_file.content;
+    rep >> cur_file.file_attr.atime;
+    rep >> cur_file.file_attr.mtime;
+    rep >> cur_file.file_attr.ctime;
+    rep >> cur_file.file_attr.size;
+
+    file_map.insert(std::make_pair(cur_ino, cur_file));
+  }
+
+  pthread_mutex_unlock(&operation_lock);
 }
