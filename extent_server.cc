@@ -163,7 +163,6 @@ std::string extent_server::marshal_state()
   std::ostringstream ost;
   std::string r;
 
-  pthread_mutex_lock(&operation_lock);
 
   marshall rep;
   unsigned int file_map_size = file_map.size();
@@ -183,7 +182,6 @@ std::string extent_server::marshal_state()
   }
 
   r = rep.str();
-  pthread_mutex_unlock(&operation_lock);
 
   return r;
 }
@@ -192,7 +190,6 @@ void extent_server::unmarshal_state(std::string state)
   unmarshall rep(state);
   unsigned int file_map_size;
 
-  pthread_mutex_lock(&operation_lock);
 
   rep >> file_map_size;
   while(file_map_size--) {
@@ -209,5 +206,4 @@ void extent_server::unmarshal_state(std::string state)
     file_map.insert(std::make_pair(cur_ino, cur_file));
   }
 
-  pthread_mutex_unlock(&operation_lock);
 }
